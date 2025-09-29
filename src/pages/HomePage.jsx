@@ -1,19 +1,34 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-
 import React from 'react'
+import background from "../assets/pictures/coffee-main-background.png"
+import { Link, NavLink, Outlet } from 'react-router-dom'
+import Header from "../components/Header";
 
-const HomePage = () => {
+const HomePage = () => { 
   return (
-    <div className="h-2000">
+    <>
+      {/* Let a picture to be the background. Styled it as necessary */}
+      <div 
+        className='min-h-screen bg-cover bg-center'  style={{ backgroundImage: `url(${background})` }}
+      >
+      <Header/>
 
-      <div className="bg-red-100 border-1 border-black w-full h-20 flex justify-around sticky top-0 items-center ">
-        <button className="bg-blue-300 border-2 border-blue-500 rounded-md h-12 w-20 cursor-pointer">Home</button>
-        <button className="bg-red-300 border-2 border-red-500 rounded-md h-12 w-20 cursor-pointer">About</button>
-      </div>
+      <main className="max-w-xl mx-auto px-4 py-10">
+        <h1 className="text-2xl font-semibold text-white">Welcome to FindMyCoffee</h1>
+        <p className="mt-2 text-gray-700 text-white">Discover and share the best coffee spots.</p>
 
+        <div className='mt-6 flex flex-wrap items-center gap-3'>
+          <Link 
+            to="/features"
+            className='inline-block rounder-xl px-4 py-2 bg-black/80 text-white hover:bg-black transition'
+          />
+
+          <Link />
+        </div>
+      </main>
     </div>
+    </>
   )
+  
 }
 
 export default HomePage

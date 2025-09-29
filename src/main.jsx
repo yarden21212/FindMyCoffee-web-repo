@@ -1,13 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { StrictMode } from 'react' // Lets JSX work.
+import { createRoot } from 'react-dom/client' // Mounts React into the real web page.
 import './index.css'
-import App from './App.jsx'
-import { AuthProvider } from './context/AuthProvider.jsx'
+import { RouterProvider } from "react-router-dom"; //makes routing work.
+import { AuthProvider } from './context/AuthProvider.jsx' //The actual map of routes.
+import router from "./router.jsx"; //This is the file of the route maps I created
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <StrictMode> 
     <AuthProvider>
-      <App />
+      <RouterProvider router={router}/>
     </AuthProvider>
   </StrictMode>,
 )

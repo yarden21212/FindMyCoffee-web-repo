@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import axios from "axios";
 import React from 'react'
 import ImgLeft from "../assets/pictures/coffee-stands.png"
-import { createBrowserRouter } from "react-router";
 import HomePage from "./HomePage";
+import { useNavigate } from "react-router-dom";
+import SpinnerLoader from "../components/SpinnerLoader";
+import Header from "../components/Header";
 
 const LoginPage = () => {
 
@@ -12,10 +14,17 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState('');
 
+  // useEffect(() => {
+  //   setLoading(true);
+  // });
+  
   
 
   const handleSumbit = async (event) => {
+    
     event.preventDefault();
     if(submitting) return;
 
@@ -42,8 +51,16 @@ const LoginPage = () => {
       if(res?.status === 200 || res?.status === 201){
         setSuccess('User exists, you will be moved to the main page');
 
+        setLoading(true);
         setPassword('');
         setUserName('');
+        
+        
+        // fake wait for 2s, then navigate
+        setTimeout(() => {
+          setLoading(false); // hide spinner
+          navigate("/");
+        }, 4000);
       }
       else{
         setError('Unexpected server response.');
@@ -56,6 +73,7 @@ const LoginPage = () => {
         message: err?.message,
         status: err?.response?.status,
         data: err?.response?.data,
+
       });
 
       const apiMsg =
@@ -66,6 +84,7 @@ const LoginPage = () => {
           : null);
 
       setError(apiMsg || 'Error registering user');
+      setLoading(false);
     }
     finally{
       setSubmitting(false);
@@ -74,85 +93,103 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-100 flex items-center justify-center p-4">
-      {/* External part */}
-      <div className="w-full max-w-4xl bg-white rounded-2xl">
-        
-        {/* Card */}
-        <form onSubmit={handleSumbit} noValidate class="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-row border-3 border-blue-400">
+    <div> 
+      <Header/>
+      <div className="min-h-screen bg-zinc-100 flex items-center justify-center p-4">
+        {/* External part */}
+        <div className="w-full max-w-4xl bg-white rounded-2xl">
+          
 
-            {/* Left */}
-            <div class="basis-3/16 bg-blue-200 border-r-4 border-blue-400 mr-2">
-              <img src={ImgLeft} className="w-full h-full object-cover"></img>
-            </div>
-
-            {/* Center */}
-            <div class="basis-10/16 mt-5">
+          <div className="relative">
+            {/* Spinner overlay */}
+            { loading ? (
+              <div className=" inset-0 flex items-center  bg-zinc-100 justify-center z-50">
+                <SpinnerLoader />
+              </div>
               
-              <div className="flex items-center justify-center">
-                <p className="mb-10 font-bold">Login to your account</p>
+            ): null}
+          </div>
+
+
+          {/* Card */}
+          <form onSubmit={handleSumbit} noValidate class="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-row border-3 border-blue-400">
+
+              {/* Left */}
+              <div class="basis-3/16 bg-blue-200 border-r-4 border-blue-400 mr-2">
+                <img src={ImgLeft} className="w-full h-full object-cover"></img>
               </div>
 
-              {error ? (
-                <div className="flex">
-                  <div
-                    className="bg-red-100 text-red-500 font-bold w-full boder-2 border-red-100 mb-10 rounded-md mr-2"
-                  >{error}</div>
-                </div>) 
-                :success ? (
+              {/* Center */}
+              <div class="basis-10/16 mt-5">
+                
+                <div className="flex items-center justify-center">
+                  <p className="mb-10 font-bold">Login to your account</p>
+                </div>
+
+                {error ? (
                   <div className="flex">
                     <div
-                      className="bg-green-100 text-green-500 font-bold w-full border-2 border-green-100 mb-10 rounded-md mr-2"
-                    >{success}</div>
-                  </div>)
-                : null
-              }
-              
-              {/* Username */}
-                <div className="flex mr-2 mb-5">
-                  <label htmlFor="login">Username: </label>
-                  <input 
-                    id="login"
-                    type="text"
-                    placeholder="e.g. Guy"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="w-full text-sm border-2 border-gray-300 shadow-lg rounded-md ml-2 mb-2 px-3"
-                  />
-                </div>
+                      className="bg-red-100 text-red-500 font-bold w-full boder-2 border-red-100 mb-10 rounded-md mr-2"
+                    >{error}</div>
+                  </div>) 
+                  :success ? ( 
+                    <div className="flex">
+                      <div
+                        className="bg-green-100 text-green-500 font-bold w-full border-2 border-green-100 mb-10 rounded-md mr-2"
+                      >{success}</div>
+                    </div>)
+                  : null
+                }
+                
+  
+                
+                {/* Username */}
+                  <div className="flex mr-2 mb-5">
+                    <label htmlFor="login">Username: </label>
+                    <input 
+                      id="login"
+                      type="text"
+                      placeholder="e.g. Guy"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      className="w-full text-sm border-2 border-gray-300 shadow-lg rounded-md ml-2 mb-2 px-3"
+                    />
+                  </div>
 
-                {/* Password */}
-                <div className="flex mr-2 mb-5">
-                  <label htmlFor="password">Password: </label>
-                  <input 
-                    id="password"
-                    type="password"
-                    placeholder="Type your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full text-sm border-2 border-gray-300 shadow-lg rounded-md ml-2 mb-2 px-3"
-                  />
-                </div>  
+                  {/* Password */}
+                  <div className="flex mr-2 mb-5">
+                    <label htmlFor="password">Password: </label>
+                    <input 
+                      id="password"
+                      type="password"
+                      placeholder="Type your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full text-sm border-2 border-gray-300 shadow-lg rounded-md ml-2 mb-2 px-3"
+                    />
+                  </div>  
 
-                <div className="flex items-center justify-center">
-                  <button className="bg-blue-300 border-3 border-blue-500 rounded-md w-35 h-10 mb-5 cursor-pointer
-                    hover:border-blue-200
-                    hover:border-3
-                    hover:bg-blue-100
-                  ">Login</button>
-                </div>
+                  <div className="flex items-center justify-center">
+                    <button className="bg-blue-300 border-3 border-blue-500 rounded-md w-35 h-10 mb-5 cursor-pointer
+                      hover:border-blue-200
+                      hover:border-3
+                      hover:bg-blue-100
+                    ">Login</button>
+                  </div>
 
-                <p className="text-sm text-gray-400 mb-5">FindMyCoffee</p>
+                  <p className="text-sm text-gray-400 mb-5">FindMyCoffee</p>
 
-            </div>
-            {/* Right */}
-            <div class="basis-3/16 bg-blue-200 border-l-4 border-blue-400">
-              <img src={ImgLeft} className="w-full h-full object-cover"></img>
-            </div>
+              </div>
+              {/* Right */}
+              <div class="basis-3/16 bg-blue-200 border-l-4 border-blue-400">
+                <img src={ImgLeft} className="w-full h-full object-cover"></img>
+              </div>
 
-        </form>   
+          </form>   
+        </div>
       </div>
     </div>
+
   )
 
 }
