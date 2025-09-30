@@ -94,8 +94,11 @@ const LoginPage = () => {
 
   return (
     <div> 
-      <Header/>
-      <div className="min-h-screen bg-zinc-100 flex items-center justify-center p-4">
+    
+      <div className='bg-zinc-200  shadow-2xl'>
+        <Header />
+      </div>
+      <div className="min-h-screen bg-amber-100 flex items-center justify-center p-4">
         {/* External part */}
         <div className="w-full max-w-4xl bg-white rounded-2xl">
           
@@ -112,10 +115,10 @@ const LoginPage = () => {
 
 
           {/* Card */}
-          <form onSubmit={handleSumbit} noValidate class="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-row border-3 border-blue-400">
+          <form onSubmit={handleSumbit} noValidate class="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-row border-3 border-amber-950/80">
 
               {/* Left */}
-              <div class="basis-3/16 bg-blue-200 border-r-4 border-blue-400 mr-2">
+              <div class="basis-3/16 bg-blue-200 border-r-4 border-amber-950/80 mr-2">
                 <img src={ImgLeft} className="w-full h-full object-cover"></img>
               </div>
 
@@ -181,7 +184,7 @@ const LoginPage = () => {
 
               </div>
               {/* Right */}
-              <div class="basis-3/16 bg-blue-200 border-l-4 border-blue-400">
+              <div class="basis-3/16 bg-blue-200 border-l-4 border-amber-950/80">
                 <img src={ImgLeft} className="w-full h-full object-cover"></img>
               </div>
 

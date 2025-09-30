@@ -108,9 +108,12 @@ export default function RegisterPage() {
 
   return (
     <div>
-      <Header />
+
+      <div className='bg-zinc-200  shadow-2xl'>
+        <Header />
+      </div>
       
-      <div className="min-h-screen bg-zinc-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-amber-100 flex items-center justify-center p-4">
         {/* CARD */}
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-2">
