@@ -152,8 +152,8 @@ const FeaturesPage = () => {
                       try{
                         var c = await getUserCurrPosition();
                         setCoords(c);
-                        setAmount(1);
-                        await getOutput(1,c)
+                        setAmount(2);
+                        await getOutput(2,c)
                       }
                       catch{
                         setError("Could not get your location.");
@@ -276,17 +276,26 @@ const FeaturesPage = () => {
         </div>
 
         <div  
+
           id="output-label" 
-          className={isVisible ? 
-            (`grid grid-cols-${amount/3} rounded-2xl p-20`) : 'hidden' }>
+          className={
+            (isVisible && amount > 2) ? "grid grid-cols-3" 
+            : (isVisible && amount <= 2) ? "grid grid-cols-2" 
+            : "hidden"
+          }
+          
+        >
           
 
           {/* <button onClick={() => setIsVisible(!isVisible)}>Toggle Content</button> */}
           {Array.isArray(output) && 
               output.map((shop, index) => (
-                <div key={shop.placeId || shop.name + index} className="row-span-3 bg-amber-700/80 border-3 rounded-2xl p-2 text-white">
+                <div 
+                  key={shop.placeId || shop.name + index} 
+                  className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
+                >
                   <p>Name: <strong>{shop.name}</strong></p>
-                  <p>Vicinity: <strong>{shop.vicinity}</strong></p>
+                  <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
                   <p>Rating: <strong>{shop.rating}⭐</strong></p>
                   <p>Distance: <strong>{shop.distanceKm}km</strong></p>
                   <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
