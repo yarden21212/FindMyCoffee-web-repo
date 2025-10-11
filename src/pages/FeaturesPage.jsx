@@ -63,6 +63,7 @@ const FeaturesPage = () => {
       setError(msg);
 
     }
+
   };
 
   const toggleDropdown = () => {
@@ -78,10 +79,7 @@ const FeaturesPage = () => {
     setInputBar(boolValue)
   };
 
-  const showClosestShop = () => {
-    setIsOpen(true);
 
-  };
 
   return (
     <div id='top-layer' className='border-y-indigo-100 min-h-screen bg-amber-100' >
@@ -152,8 +150,8 @@ const FeaturesPage = () => {
                       try{
                         var c = await getUserCurrPosition();
                         setCoords(c);
-                        setAmount(2);
-                        await getOutput(2,c)
+                        setAmount(1);
+                        await getOutput(1,c)
                       }
                       catch{
                         setError("Could not get your location.");
@@ -186,6 +184,7 @@ const FeaturesPage = () => {
 
                       try{
                         const c = await getUserCurrPosition();
+
                         setCoords(c);
                         setAmount(9);
                         await getOutput(9, c);
@@ -279,16 +278,14 @@ const FeaturesPage = () => {
 
           id="output-label" 
           className={
-            (isVisible && amount > 2) ? "grid grid-cols-3" 
-            : (isVisible && amount <= 2) ? "grid grid-cols-2" 
-            : "hidden"
+            (isVisible && amount <= 1) ? "grid grid-cols-1" : 
+            (isVisible && amount <= 2) ? "grid grid-cols-2" :
+            (isVisible && amount > 2) ? "grid grid-cols-3" :
+            "hidden"
           }
+          >
           
-        >
-          
-
-          {/* <button onClick={() => setIsVisible(!isVisible)}>Toggle Content</button> */}
-          {Array.isArray(output) && 
+          { Array.isArray(output) && 
               output.map((shop, index) => (
                 <div 
                   key={shop.placeId || shop.name + index} 
@@ -301,6 +298,7 @@ const FeaturesPage = () => {
                   <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
                 </div>
             ))}
+
         </div>
 
       </div>

@@ -1,33 +1,43 @@
+/*
+* returns {Promise<{latitude: number, longitude: number}>}
+*/
+// export default function getUserCurrPosition(){
+//   return new Promise((resolve, reject) => {
+//     navigator.geolocation.getCurrentPosition(
+//       ({coords}) => {
+//         const {latitude, longitude} = coords;
+//         resolve({latitude, longitude});
+//       },
+//       (error) => reject(error)
+//     );
+//   });
+// }
+
 export default function getUserCurrPosition(){
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      ({coords}) => {
-        const {latitude, longitude} = coords;
-        resolve({latitude, longitude});
+    
+    if(!navigator.geolocation){
+      return reject(new Error("Geolocation is not supported by this browser."));
+    }
+    else{
+      navigator.geolocation.getCurrentPosition(
+      // 1. SUCCESS CALLBACK: Runs when the position is successfully retrieved
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // Fulfills the Promise, passing the data as the resolved value.
+        resolve({ latitude, longitude });
       },
-      (error) => reject(error)
-    );
+      
+      // 2. ERROR CALLBACK: Runs when the request fails (e.g., user denies permission)
+      (error) => {
+        // Rejects the Promise, passing the error object as the rejection reason.
+        reject(error);
+      }),
+       {
+        enableHighAccuracy: true,
+        timeout: 5000, // 5 seconds
+        maximumAge: 0 // Do not use a cached position
+      }
+    }
   });
 }
-
-
-
-
-
-
-
-
-
-
-// export default function getUserCurrPosition(setCoords){
-//   navigator.geolocation.getCurrentPosition(
-//     ({ coords }) => {
-//       const { latitude, longitude } = coords;
-//       setCoords({latitude, longitude});
-//       console.log(latitude, longitude)
-//     },
-//     (error) => {
-//       console.error("Error getting position:", error);
-//     }
-//   );
-// };
