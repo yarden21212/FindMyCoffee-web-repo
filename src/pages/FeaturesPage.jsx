@@ -5,6 +5,7 @@ import FeatureButton from "../components/FeatureButton"
 import axios from "axios"
 import CoffeeShopList from "../components/CoffeeShopOutput/CoffeeShopList"
 import getUserCurrPosition from "../Services/GetUserCurrPosition";
+import ShopsOutput from "../components/CoffeeShopOutput/ShopsOutput"
 
 const FeaturesPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,30 +17,35 @@ const FeaturesPage = () => {
   const [output, setOutput] = useState("");
   const [amount, setAmount] = useState(0);
 
+
   /* Buttons */
-  const [justClick, setJustClick] = useState(false);
+  // const [justClick, setJustClick] = useState(false);
   const [isVisible ,setIsVisible] = useState(false);
+  const [ratingRange, setRatingRange] = useState('');
+  const {type, setType} = useState('');
 
-  // const getShopCoords = () => {
-  //   setSuccess("");
-  //   setError("");
-
-    
-  //   try{
-  //     console.log("Im here(1)");
-  //     getUserCurrPosition(setCoords);
-  //     console.log(coords)
-  //   }catch{
-  //     setError('Unexpected server response.');
-  //   }
-  // };
-
-  //  useEffect(() => {
-  //   if (!coords || (coords.latitude === 0 && coords.longitude === 0)) return;
-  // }, [coords]);
-
+  const LABELS = {
+    closest: "Closest Coffeeshop",
+    distance: "Find By Distance",
+    rate: "Find By Rate",
+    type: "Find By Type",
+    name: "Find By Name",
+  };
+  const [mode, setMode] = useState(null); 
   
+  const [option, setOption] = useState("none"); //Tracks which button we pressed, so we can track if we need to make the output visible or invisible
+
+  const choose = (chosenMode) => {
+    setMode(chosenMode);   
+    setSelectedLabel(LABELS[chosenMode]);
+    setIsOpen(false);
+  };
+
+
   const getOutput = async (numOfCoffeeshops, currCoords) => {
+
+    setOutput("");
+    setAmount(0);
 
     console.log("currCoords param:", currCoords);
 
@@ -49,14 +55,14 @@ const FeaturesPage = () => {
     }
 
     try {
-      const res = await axios.post("/api/CoffeeShop/FindClosestCoffeeshops", {
+      const response = await axios.post("/api/CoffeeShop/FindClosestCoffeeshops", {
       userLat: currCoords.latitude,
       userLng: currCoords.longitude,
       amount: numOfCoffeeshops,
       });
 
       setSuccess("Connected to the database");
-      setOutput(res.data);
+      setOutput(response.data);
     } catch (e) {
       const msg =
         e?.response?.data?.message || e.message || "Didn't manage to connect to the server";
@@ -66,13 +72,51 @@ const FeaturesPage = () => {
 
   };
 
+  /* TODO: Add parameter of max distance to check the closest stores with the given range of rating*/
+  const getShopsByRating = async (ratingMin, ratingMax) => {
+
+    setOutput("");
+    setAmount(0);
+    setRatingRange(`${ratingMin},${ratingMax}`);
+    console.log(ratingRange);
+
+    var currCoords;
+
+    try{
+      currCoords = getUserCurrPosition();
+      setSuccess("Managed to get the user coords")
+    }catch(error){
+      setError("Failed to get the user's location")
+      console.log("I'm here: " + error);
+    }
+
+    if (!currCoords || (currCoords.latitude === 0 && currCoords.longitude === 0)) {
+      setError("Get your location first.");
+      return;
+    }
+
+    try{
+      const response = axios.post("/api/CoffeeShop/FindByRating", {
+        MinRating: ratingMin,
+        MaxRating: ratingMax,
+        userLat: currCoords.latitude,
+        userLng: currCoords.longitude
+      });
+      
+      setAmount(10);
+      setSuccess("Connected to the database");
+      setOutput((await response).data)
+
+      console.log("I'm here!");
+    }catch(e){
+      const msg =
+        e?.response?.data?.message || e.message || "Didn't manage to connect to the server";
+      setError(msg);
+    }
+  }
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
-  };
-  
-  const choose = (label) => {
-    setSelectedLabel(label);
-    setIsOpen(false);
   };
 
   const popInputBar = (boolValue) => {
@@ -81,7 +125,9 @@ const FeaturesPage = () => {
 
 
 
+
   return (
+
     <div id='top-layer' className='border-y-indigo-100 min-h-screen bg-amber-100' >
 
       <div className='bg-zinc-200  shadow-2xl'>
@@ -104,24 +150,91 @@ const FeaturesPage = () => {
             {
               selectedLabel === "Find By Type" ? (
                 <div className="ml-4 grid grid-rows-2 grid-cols-4 gap-x-16 gap-y-4 place-items-center">
-                  <FeatureButton name="Italian" />
-                  <FeatureButton name="French" />
-                  <FeatureButton name="Cats" />
-                  <FeatureButton name="Classic" />
-                  <FeatureButton name="Truck" />
-                  <FeatureButton name="Bakery" />
-                  <FeatureButton name="Theme" />
-                  <FeatureButton name="Pub" />                 
+                  <FeatureButton name="Italian" onClick={setType('Italian')} />
+                  <FeatureButton name="French" onClick={setType('French')} />
+                  <FeatureButton name="Cats" onClick={setType('Cats')} />
+                  <FeatureButton name="Classic" onClick={setType('Classic')} />
+                  <FeatureButton name="Truck" onClick={setType('Truck')}/>
+                  <FeatureButton name="Bakery" onClick={setType('Bakery')}/>
+                  <FeatureButton name="Theme" onClick={setType('Theme')}/>
+                  <FeatureButton name="Pub" onClick={setType('Pub')}/>                 
                 </div>
-              )
+              ) 
               :selectedLabel === "Find By Rate" ? (
-                <div className="ml-4 grid grid-rows-1 grid-cols-5 gap-x-6 place-items-center">
-                  <FeatureButton name="1-2" />
-                  <FeatureButton name="2-3" />
-                  <FeatureButton name="3.5 - 4" />
-                  <FeatureButton name="4 - 4.5" />               
-                  <FeatureButton name="4.5 - 5" />               
-                </div>
+                <div 
+                  className="ml-4 grid grid-rows-1 grid-cols-5 gap-x-6 place-items-center">
+                  <FeatureButton name="1 - 2" onClick={() => {
+                    if(isVisible && option === 'rate:1-2'){
+                      setIsVisible(false);
+                      setCoords(null);
+                      setOption('none');
+                      return;
+
+                    }
+                    
+                    setIsVisible(true);
+                    setMode("rate");
+                    getShopsByRating(1, 2);
+                    setOption('rate:1-2');
+                  }}/>
+                  <FeatureButton name="2 - 3" onClick={() => {
+                    
+                    if(isVisible && option === 'rate:2-3'){
+                      setIsVisible(false);
+                      setCoords(null);
+                      setOption('none');
+                      return;
+                    }
+
+
+                    setIsVisible(true);
+                    setMode('rate');
+                    getShopsByRating(2, 3);
+                    setOption('rate:2-3');
+                  }} />
+                  <FeatureButton name="3 - 4" onClick={() => {
+                    
+                    if(isVisible && option === 'rate:3-4'){
+                      setIsVisible(false);
+                      setCoords(null);
+                      setOption('none')
+                      return;
+                    }
+
+
+                    setIsVisible(true);
+                    setMode('rate');
+                    getShopsByRating(3, 4);
+                    setOption('rate:3-4');
+                  }} />
+                  <FeatureButton name="4 - 4.5" onClick={() => {
+                    if(isVisible && option === 'rate:4-4.5'){
+                      setIsVisible(false);
+                      setCoords(null);
+                      setOption('none')
+                      return;
+                    }
+
+                    setIsVisible(true);
+                    setMode('rate');
+                    getShopsByRating(4, 4.5)
+                    setOption('rate:4-4.5')
+                  }} />               
+                  <FeatureButton name="4.5 - 5" onClick={() => {
+                    if(isVisible && option === 'rate:4.5-5'){
+                      setIsVisible(false);
+                      setCoords(null);
+                      setOption('none')
+                      return;
+
+                    }
+                  
+                    setIsVisible(true);
+                    setMode("rate");
+                    getShopsByRating(4.5, 5)
+                    setOption("rate:4.5-5")
+                  }}/>
+              </div>
               )
               :selectedLabel === "Find By Name" ? (
                 <div>
@@ -139,14 +252,16 @@ const FeaturesPage = () => {
                     
                     onClick={async () => {
 
-                      if(isVisible){
+                      if(isVisible && option === 'closest'){
                         setIsVisible(false);
                         setCoords(null);
+                        setOption('none');
                         return;
                       }
 
                       setIsVisible(true);
-
+                      setMode("closest")
+                      setOption('closest');
                       try{
                         var c = await getUserCurrPosition();
                         setCoords(c);
@@ -174,14 +289,16 @@ const FeaturesPage = () => {
                     
                     onClick={async () => {
 
-                      if(isVisible){
+                      if(isVisible && option === 'distance'){
                         setIsVisible(false);
                         setCoords(null);
+                        setOption('none');
                         return;
                       }
 
                       setIsVisible(true);
-
+                      setMode("distance");
+                      setOption('distance');
                       try{
                         const c = await getUserCurrPosition();
 
@@ -238,20 +355,18 @@ const FeaturesPage = () => {
                   className="border border-gray-200 rounded-md bg-white absolute top-[40px] w-[400px] shadow-md"
                 >
                  
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("Find By Type"); popInputBar(false)} }>Find By Type</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("Find By Name"); popInputBar(true)} }>Find By Name</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("Find By Rate"); popInputBar(false)}}>Find By Rate</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("Closest Coffeeshop"); popInputBar(false)}}>Closest Coffeeshop</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("Find By Distance"); popInputBar(false)}}>Find By Distance</div>
+                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("type"); popInputBar(false); setIsVisible(false)} }>Find By Type</div>
+                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("name"); popInputBar(true); popInputBar(false);} }>Find By Name</div>
+                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("rate"); popInputBar(false); setIsVisible(false)}}>Find By Rate</div>
+                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("closest"); popInputBar(false); setIsVisible(false)}}>Closest Coffeeshop</div>
+                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("distance"); popInputBar(false); setIsVisible(false)}}>Find By Distance</div>
 
                 </div>
               )}
 
               {selectedLabel === "Find By Type" ? (
                 
-                <div>
-
-                </div>
+                <div></div>
               )
               :selectedLabel === "Find By Name" ?(
                 <div></div>
@@ -274,31 +389,87 @@ const FeaturesPage = () => {
           
         </div>
 
-        <div  
-
-          id="output-label" 
-          className={
-            (isVisible && amount <= 1) ? "grid grid-cols-1" : 
-            (isVisible && amount <= 2) ? "grid grid-cols-2" :
-            (isVisible && amount > 2) ? "grid grid-cols-3" :
-            "hidden"
-          }
-          >
+        
+        <div>
           
-          { Array.isArray(output) && 
-              output.map((shop, index) => (
-                <div 
-                  key={shop.placeId || shop.name + index} 
-                  className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
-                >
-                  <p>Name: <strong>{shop.name}</strong></p>
-                  <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
-                  <p>Rating: <strong>{shop.rating}⭐</strong></p>
-                  <p>Distance: <strong>{shop.distanceKm}km</strong></p>
-                  <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
-                </div>
-            ))}
-
+          {mode === "distance" ?
+            (
+              <div  
+                id="output-label" 
+                className={
+                  // (isVisible && amount <= 1) ? "grid grid-cols-1" : 
+                  // (isVisible && amount <= 2) ? "grid grid-cols-2" :
+                  // (isVisible && amount > 2) ? "grid grid-cols-3" :
+                  (isVisible) ? "grid grid-cols-3" :
+                  "hidden"
+                }
+              >
+                { Array.isArray(output) && 
+                output.map((shop, index) => (
+                  <div 
+                    key={shop.placeId || shop.name + index} 
+                    className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
+                  >
+                    <p>Name: <strong>{shop.name}</strong></p>
+                    <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
+                    <p>Rating: <strong>{shop.rating}⭐</strong></p>
+                    <p>Distance: <strong>{shop.distanceKm}km</strong></p>
+                    <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
+                  </div>
+                ))
+                }
+              </div>
+            )
+            :mode === "rate" ? 
+            (
+              <div
+                id="rating-label"
+                className={
+                  isVisible ? "grid grid-cols-3" : "hidden"
+                }
+              >
+                { Array.isArray(output) && 
+                output.map((shop, index) => (
+                  <div 
+                    key={shop.placeId || shop.name + index} 
+                    className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
+                  >
+                    <p>Name: <strong>{shop.name}</strong></p>
+                    <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
+                    <p>Rating: <strong>{shop.rating}⭐</strong></p>
+                    <p>Distance: <strong>{shop.distanceKm}km</strong></p>
+                    <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
+                  </div>
+                ))
+                }
+            </div>
+            )
+            :mode === "closest" ? 
+            (
+              <div
+                id="closest-label"
+                className={
+                  isVisible ? "flex items-center justify-center" : "hidden"
+                }
+              >
+                {/* <ShopsOutput output/> */}
+              { Array.isArray(output) && 
+                output.map((shop, index) => (
+                  <div 
+                    key={shop.placeId || shop.name + index} 
+                    className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
+                  >
+                    <p>Name: <strong>{shop.name}</strong></p>
+                    <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
+                    <p>Rating: <strong>{shop.rating}⭐</strong></p>
+                    <p>Distance: <strong>{shop.distanceKm}km</strong></p>
+                    <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
+                  </div>
+                ))
+                }  
+              </div>
+            ):null
+          }
         </div>
 
       </div>
