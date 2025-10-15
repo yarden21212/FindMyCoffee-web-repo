@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
-import firstPicture from '../assets/pictures/coffee-main-background.png'
+import firstPicture from '../assets/pictures/Coffee-machine-at-bar-enviroment.png'
+import secondPicture from '../assets/pictures/coffee-main-background.png'
 import { Link, NavLink } from 'react-router-dom'
 
 const AboutPage = () => {
@@ -9,9 +10,9 @@ const AboutPage = () => {
       <div className='bg-zinc-200  shadow-2xl'>
         <Header />
       </div>
-        <div className="grid grid-cols-10 gap-10 justify-items-end mr-50 mt-10">
-          <div className="col-span-1"></div>
-          <div className="col-span-4">
+        <div className="grid grid-cols-11 gap-10 justify-items-end mr-50 mt-10">
+          <div className="col-span-2"></div>
+          <div className="col-span-3">
             <p className='text-7xl font-semibold mb-5'>About Us</p>
             <p>
               FindMyCoffee is willing to be the first website\application with one and only purpose, to find your perfect coffee!
@@ -23,16 +24,16 @@ const AboutPage = () => {
               "FindMyCoffee"
             </p>
           </div>
-          <div className="col-span-5 w-80 border rounded-md">
+          <div className="col-span-6 w-80 border-4 rounded-md">
             <img src={firstPicture}/>
           </div>
           {/* <div className="col-span-1">right gap</div> */}
         </div>
 
         <div>
-          <div className="grid grid-cols-10 gap-10 justify-items-end mr-50 mt-10">
-            <div className="col-span-1"></div>
-            <div className="col-span-4">
+          <div className="grid grid-cols-11 gap-10 justify-items-end mr-50 mt-10">
+            <div className="col-span-2"></div>
+            <div className="col-span-3">
               <p className='text-7xl font-semibold mb-5'>Start Exploring</p>
               <p>
                 You won't know until you try, right?
@@ -41,8 +42,8 @@ const AboutPage = () => {
             </div>
             <NavLink 
               to={'/features'}
-              className="col-span-5 w-80 border rounded-md mb-10">
-              <img src={firstPicture}/>
+              className="col-span-6 w-80 border-4 rounded-full mb-10">
+              <img className="rounded-full" src={secondPicture}/>
             </NavLink>
             {/* <div className="col-span-1">right gap</div> */}
           </div>

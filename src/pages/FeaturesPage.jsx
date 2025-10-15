@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, use } from "react"
 import Header from '../components/Header'
 import downArrowIcon from '../assets/down-arrow.svg'
 import FeatureButton from "../components/FeatureButton"
@@ -6,15 +6,16 @@ import axios from "axios"
 import CoffeeShopList from "../components/CoffeeShopOutput/CoffeeShopList"
 import getUserCurrPosition from "../Services/GetUserCurrPosition";
 import ShopsOutput from "../components/CoffeeShopOutput/ShopsOutput"
+import SecondDropdown from "../components/SecondDropdown"
+
+
+
 
 const FeaturesPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("Options");
-  const [inputBar, setInputBar] = useState(false);
   const [coords, setCoords] = useState(null);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = useState([]);
   const [amount, setAmount] = useState(0);
 
 
@@ -24,6 +25,7 @@ const FeaturesPage = () => {
   const [ratingRange, setRatingRange] = useState('');
   const {type, setType} = useState('');
 
+  /* Dropdown mode bar*/
   const LABELS = {
     closest: "Closest Coffeeshop",
     distance: "Find By Distance",
@@ -31,18 +33,29 @@ const FeaturesPage = () => {
     type: "Find By Type",
     name: "Find By Name",
   };
+  const [selectedLabel, setSelectedLabel] = useState("Options");
+  const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState(null); 
-  
   const [option, setOption] = useState("none"); //Tracks which button we pressed, so we can track if we need to make the output visible or invisible
-
   const choose = (chosenMode) => {
     setMode(chosenMode);   
     setSelectedLabel(LABELS[chosenMode]);
     setIsOpen(false);
   };
+  
+  /* Used for pulling the distance was chosen from the second dropdown element */
+  const [distance, setDistance] = useState("any");
+  function chooseDistance(dist){
+    setDistance(dist);
+  }
+  
+  /* InputBar */
+  const [inputBar, setInputBar] = useState(false);
+  const [inputBarValue, setInputBarValue] = useState("");
+  const [inputBarClicked, setInputBarClicked] = useState(false);
 
 
-  const getOutput = async (numOfCoffeeshops, currCoords) => {
+  const getClosestShops = async (numOfCoffeeshops, currCoords) => {
 
     setOutput("");
     setAmount(0);
@@ -83,7 +96,7 @@ const FeaturesPage = () => {
     var currCoords;
 
     try{
-      currCoords = getUserCurrPosition();
+      currCoords = await getUserCurrPosition();
       setSuccess("Managed to get the user coords")
     }catch(error){
       setError("Failed to get the user's location")
@@ -95,12 +108,14 @@ const FeaturesPage = () => {
       return;
     }
 
+    console.log(`distance is: ${distance}`);
     try{
       const response = axios.post("/api/CoffeeShop/FindByRating", {
         MinRating: ratingMin,
         MaxRating: ratingMax,
         userLat: currCoords.latitude,
-        userLng: currCoords.longitude
+        userLng: currCoords.longitude,
+        DistanceRanage: distance
       });
       
       setAmount(10);
@@ -115,18 +130,51 @@ const FeaturesPage = () => {
     }
   }
 
+  const getShopsByName = async(name) => {
+
+    setOutput("");
+    setAmount(0);
+
+    var currCoords;
+
+    try{
+      currCoords = await getUserCurrPosition();
+      
+      console.log("Successfuly got the user coords");
+    }
+    catch(e){
+      console.log("Fafiled to get the user's coords!");
+
+      console.log(`Error: ${e}`);
+    }
+
+    try{
+      var response = await axios.post('/api/CoffeeShop/GetShopsByName/GetShopsByName', {
+      Name: inputBarValue,
+      UserLat: currCoords.latitude,
+      userLng: currCoords.longitude
+    })
+
+      setSuccess("Connected to the database");
+      setOutput((await response).data)
+    }
+    catch(e){
+      const msg =
+        e?.response?.data?.message || e.message || "Didn't manage to connect to the server";
+      setError(msg);
+    }
+  }
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
 
   const popInputBar = (boolValue) => {
     setInputBar(boolValue)
   };
 
-
-
-
-  return (
+    return (
 
     <div id='top-layer' className='border-y-indigo-100 min-h-screen bg-amber-100' >
 
@@ -237,13 +285,48 @@ const FeaturesPage = () => {
               </div>
               )
               :selectedLabel === "Find By Name" ? (
-                <div>
+                <div className="grid grid-rows-2 gap-2 place-items-center">
+
                   <input
                     id='input-bar'
                     placeholder='Enter a name' 
                     className={
-                      (inputBar ? 'px-5 py-2 h-full w-130 border-3 border-amber-900 shadow-lg shadow-black/50 rounded-2xl focus:ring-3 ring-white ': 'hidden')}>
+                      (inputBar ? 'px-5 py-2 h-full w-130 border-3 border-amber-900 shadow-lg shadow-black/50 rounded-2xl focus:ring-3 ring-white  hover:bg-amber-300': 'hidden')}
+
+                    //Controlling an input with a state variable 
+                    value = {inputBarValue}
+                    onChange={e => setInputBarValue(e.target.value)}
+                    >
                   </input>
+
+                  <button
+                    className="bg-amber-900 text-white py-1 h-full w-20 border-3 border-black shadow-lg shadow-black/50 rounded-2xl cursor-pointer hover:bg-amber-300 active:bg-amber-400"
+                    value = {inputBarClicked}
+                    onClick={async () => {
+
+                    if(isVisible && option === 'name'){
+                      setIsVisible(false);
+                      setCoords(null);
+                      setOption('none');
+                      return;
+                    }
+
+                    setIsVisible(true);
+                    setMode("name");
+                    setOption('name');
+                    try{
+                      const c = await getUserCurrPosition();
+
+                      setCoords(c);
+                      await getShopsByName(inputBarValue, c);
+                    }
+                    catch{
+                      setError("Could not get your location.");
+                    }
+                  }}
+                  >Search
+                  </button>
+                
                 </div>
               )
               :selectedLabel === "Closest Coffeeshop" ? (
@@ -266,7 +349,7 @@ const FeaturesPage = () => {
                         var c = await getUserCurrPosition();
                         setCoords(c);
                         setAmount(1);
-                        await getOutput(1,c)
+                        await getClosestShops(1,c)
                       }
                       catch{
                         setError("Could not get your location.");
@@ -304,7 +387,7 @@ const FeaturesPage = () => {
 
                         setCoords(c);
                         setAmount(9);
-                        await getOutput(9, c);
+                        await getClosestShops(9, c);
                       }
                       catch{
                         setError("Could not get your location.");
@@ -329,12 +412,12 @@ const FeaturesPage = () => {
            
           </div>
 
-          <div id='dropDownButton' className='w-full h-full border-l-2 col-span-3 flex items-center justify-center'>
+          <div id='dropDownButton' className='w-full h-full border-l-2 col-span-3 grid items-center justify-center'>
 
 
             <div
               id="options-pointer-image-label" 
-              className='border-2 border-gray-300 w-40 px-2 py-1 rounded font-bold cursor-pointer flex justify-between relative bg-white shadow-sm select-none'
+              className='border-2 border-gray-300 w-40 px-2 py-1 rounded font-bold cursor-pointer flex justify-between relative bg-white shadow-sm select-none '
               onClick={toggleDropdown}
             >
               <div 
@@ -343,133 +426,73 @@ const FeaturesPage = () => {
                 >{selectedLabel}
               </div>
 
+
               <div
                 id="pointer-image" 
                 className='flex items-center justify-center'
               >
                 <img src={downArrowIcon} className='w-3 ml-1'/>
               </div>
+              
 
               {isOpen && (
                 <div 
-                  className="border border-gray-200 rounded-md bg-white absolute top-[40px] w-[400px] shadow-md"
+                  className="inline- border border-gray-200 rounded-md bg-white absolute top-[40px] w-[400px] shadow-md"
                 >
                  
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("type"); popInputBar(false); setIsVisible(false)} }>Find By Type</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("name"); popInputBar(true); popInputBar(false);} }>Find By Name</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("rate"); popInputBar(false); setIsVisible(false)}}>Find By Rate</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("closest"); popInputBar(false); setIsVisible(false)}}>Closest Coffeeshop</div>
-                  <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {choose("distance"); popInputBar(false); setIsVisible(false)}}>Find By Distance</div>
-
+                  <div className="cursor-pointer hover:bg-red-200 px-4 p-4" onClick={() => {choose("type"); popInputBar(false); setIsVisible(false)} }>Find By Type</div>
+                  <div className="cursor-pointer hover:bg-red-200 px-4 p-4" onClick={() => {choose("name"); popInputBar(true); setIsVisible(false);} }>Find By Name</div>
+                  <div className="cursor-pointer hover:bg-red-200 px-4 p-4" onClick={() => {choose("rate"); popInputBar(false); setIsVisible(false)}}>Find By Rate</div>
+                  <div className="cursor-pointer hover:bg-red-200 px-4 p-4" onClick={() => {choose("closest"); popInputBar(false); setIsVisible(false)}}>Closest Coffeeshop</div>
+                  <div className="cursor-pointer hover:bg-red-200 px-4 p-4" onClick={() => {choose("distance"); popInputBar(false); setIsVisible(false)}}>Find By Distance</div>
                 </div>
               )}
 
-              {selectedLabel === "Find By Type" ? (
-                
-                <div></div>
-              )
-              :selectedLabel === "Find By Name" ?(
-                <div></div>
-              )
-              :selectedLabel === "Find By Rate" ?(
-                <div></div>
-              )
-              :selectedLabel === "Closest Coffeeshop" ?(
-                <div></div>
-              )
-              : null}
               
               
             </div>
 
-
-    
+              {
+                /*
+                * If the chosen mode is "Find By Type" or "Find By Rate", then a second dropdown component will show up under the first one 
+                */
+                (selectedLabel === "Find By Type" || selectedLabel === 'Find By Rate') && <div><SecondDropdown chooseDistance={chooseDistance}/></div>
+              }
               
+              <button>{distance}</button>
+
           </div>
           
         </div>
 
         
         <div>
-          
-          {mode === "distance" ?
-            (
-              <div  
-                id="output-label" 
-                className={
-                  // (isVisible && amount <= 1) ? "grid grid-cols-1" : 
-                  // (isVisible && amount <= 2) ? "grid grid-cols-2" :
-                  // (isVisible && amount > 2) ? "grid grid-cols-3" :
-                  (isVisible) ? "grid grid-cols-3" :
-                  "hidden"
-                }
-              >
-                { Array.isArray(output) && 
-                output.map((shop, index) => (
-                  <div 
-                    key={shop.placeId || shop.name + index} 
-                    className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
-                  >
-                    <p>Name: <strong>{shop.name}</strong></p>
-                    <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
-                    <p>Rating: <strong>{shop.rating}⭐</strong></p>
-                    <p>Distance: <strong>{shop.distanceKm}km</strong></p>
-                    <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
-                  </div>
-                ))
-                }
-              </div>
-            )
-            :mode === "rate" ? 
-            (
-              <div
-                id="rating-label"
-                className={
-                  isVisible ? "grid grid-cols-3" : "hidden"
-                }
-              >
-                { Array.isArray(output) && 
-                output.map((shop, index) => (
-                  <div 
-                    key={shop.placeId || shop.name + index} 
-                    className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
-                  >
-                    <p>Name: <strong>{shop.name}</strong></p>
-                    <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
-                    <p>Rating: <strong>{shop.rating}⭐</strong></p>
-                    <p>Distance: <strong>{shop.distanceKm}km</strong></p>
-                    <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
-                  </div>
-                ))
-                }
+
+              
+          {mode === "distance" ? (
+            <div id="output-label" className={isVisible ? "" : "hidden"}>
+              <ShopsOutput mode={mode} output={output} isVisible={isVisible}/>
             </div>
-            )
-            :mode === "closest" ? 
-            (
-              <div
-                id="closest-label"
-                className={
-                  isVisible ? "flex items-center justify-center" : "hidden"
-                }
-              >
-                {/* <ShopsOutput output/> */}
-              { Array.isArray(output) && 
-                output.map((shop, index) => (
-                  <div 
-                    key={shop.placeId || shop.name + index} 
-                    className=" bg-amber-700/80 border-3 rounded-2xl p-3 text-white"
-                  >
-                    <p>Name: <strong>{shop.name}</strong></p>
-                    <p>Vicinity: <strong>{shop.vicinity}</strong></p> 
-                    <p>Rating: <strong>{shop.rating}⭐</strong></p>
-                    <p>Distance: <strong>{shop.distanceKm}km</strong></p>
-                    <p>Price-Level: <strong>{shop.priceLevel}</strong></p>
-                  </div>
-                ))
-                }  
-              </div>
-            ):null
-          }
+          ):mode === "type" ? (
+            <div id="type-label" className={isVisible ? "" : "hidden"}>
+              <ShopsOutput mode={mode} output={output} isVisible={isVisible} distance={distance}/>
+            </div>
+          )
+           : mode === "rate" ? (
+            <div id="rating-label" className={isVisible ? "" : "hidden"}>
+              <ShopsOutput mode={mode} output={output} isVisible={isVisible} distance={distance}/>
+            </div>
+          ) : mode === "closest" ? (
+            <div id="closest-label" className={isVisible ? "" : "hidden"}>
+    
+            </div>
+          ) 
+          : mode === "name" ? (
+            <div id="name-label" className={isVisible ? "" : "hidden"}>
+              <ShopsOutput mode={mode} output={output} isVisible={isVisible} inputBarValue={inputBarValue} inputBarClicked={inputBarClicked}/>
+            </div>
+          )
+          : null}
         </div>
 
       </div>
