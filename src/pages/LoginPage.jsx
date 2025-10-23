@@ -6,6 +6,7 @@ import HomePage from "./HomePage";
 import { useNavigate } from "react-router-dom";
 import SpinnerLoader from "../components/SpinnerLoader";
 import Header from "../components/Header";
+import UsernameHeader from "../components/CoffeeShopOutput/UsernameHeader";
 
 const LoginPage = () => {
 
@@ -17,9 +18,12 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState('');
 
-  // useEffect(() => {
-  //   setLoading(true);
-  // });
+  //Save the login username
+  const[usernameLabel, setUsernameLabel] = useState('');
+
+  useEffect(() => {
+    console.log("usernameLabel now:", usernameLabel);
+  }, [usernameLabel]);
   
   
 
@@ -43,12 +47,27 @@ const LoginPage = () => {
     try{
       setSubmitting(true);
 
-      console.log("Password is:" + password);
-      console.log("userName is:" + userName);
+      //const res = await axios.post("/api/auth/login", loginAttempt);
+      const res = await axios.post("/api/auth/login", loginAttempt, { headers: { "Content-Type": "application/json" } });
 
-      const res = await axios.post("/api/User/Login/loginUser", loginAttempt);
-
+      console.log("Username is:", usernameLabel);
       if(res?.status === 200 || res?.status === 201){
+
+        console.log("-----Logo-name test-----");
+
+        const userRes = await axios.get("/api/auth/getUsername"); // cookie will be sent
+        // setUsernameLabel(userRes.data.username);
+        
+        var name = userRes.data.username;
+        console.log("Do I get the new name before localStorage?: " + name);
+        localStorage.setItem("username", name);
+        //localStorage.setItem("username", name);  // save
+        <UsernameHeader name={name} applyEffect={true}/>
+        setUsernameLabel(name);
+        
+        console.log("the value of the 'username' inside localstorage is: " + localStorage.getItem('username'));
+        // <UsernameHeader usernameLabel = {usernameLabel}/>
+
         setSuccess('User exists, you will be moved to the main page');
 
         setLoading(true);
@@ -91,6 +110,7 @@ const LoginPage = () => {
     }
 
   }
+
 
   return (
     <div> 

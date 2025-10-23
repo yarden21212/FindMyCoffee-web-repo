@@ -1,4 +1,5 @@
 import React from 'react'
+// import SpinnerLoader from "../components/SpinnerLoader";
 
 /* JSX variables */
 
@@ -13,27 +14,34 @@ const grid = (mode, amount) => {
 
 const ShopsOutput = ({ mode, output}) => {
 
-  if (output.length === 0) return <p>No results yet.</p>;
+  while(!output){
+    return "loading...";
+  }
+  
+  if (output.length === 0) return <p>No results</p>;
+  
+  else{
+    const gridClass = grid(mode, output.length);
 
-  const gridClass = grid(mode, output.length);
-
-  return (
-     <div 
-      className={`mx-auto w-full max-w-6xl ${gridClass}`}
-      // style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-     >
-      {output.map((shop, i) => (
-        <div key={shop.id} className="bg-amber-700/80 rounded-2xl p-3 text-white">
-          <p>Name: <strong>{shop.name}</strong></p>
-          <p>Vicinity: <strong>{shop.vicinity}</strong></p>
-          <p>Rating: <strong>{shop.rating}⭐</strong></p>
-          {/* <p>Title: <strong>{shop.title}</strong></p> */}
-          <p>PriceLevel: <strong>{shop.priceLevel}</strong></p>
-          <p>Distance: <strong>{shop.distanceKm}km</strong></p>
-        </div>
-      ))}
-    </div>
-  );
+    return (
+      <div 
+        className={`mx-auto w-full max-w-6xl ${gridClass}`}
+        // style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
+      >
+        {output.map((shop, /* i */) => (
+          <div key={shop.id} className="bg-amber-700/80 rounded-2xl p-3 text-white">
+            <p>Name: <strong>{shop.name}</strong></p>
+            <p>Vicinity: <strong>{shop.vicinity}</strong></p>
+            <p>Rating: <strong>{shop.rating}⭐</strong></p>
+            {/* <p>Title: <strong>{shop.title}</strong></p> */}
+            <p>PriceLevel: <strong>{shop.priceLevel}</strong></p>
+            <p>Distance: <strong>{shop.distanceKm}km</strong></p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  
 };
 
 export default ShopsOutput

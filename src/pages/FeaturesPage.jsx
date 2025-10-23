@@ -23,7 +23,7 @@ const FeaturesPage = () => {
   // const [justClick, setJustClick] = useState(false);
   const [isVisible ,setIsVisible] = useState(false);
   const [ratingRange, setRatingRange] = useState('');
-  const {type, setType} = useState('');
+  const [shopType, setShopType] = useState('');
 
   /* Dropdown mode bar*/
   const LABELS = {
@@ -57,7 +57,6 @@ const FeaturesPage = () => {
 
   const getClosestShops = async (numOfCoffeeshops, currCoords) => {
 
-    setOutput("");
     setAmount(0);
 
     console.log("currCoords param:", currCoords);
@@ -85,13 +84,54 @@ const FeaturesPage = () => {
 
   };
 
-  /* TODO: Add parameter of max distance to check the closest stores with the given range of rating*/
+  const getShopsByType = async (type) => {
+    setOutput("");
+    setAmount(0);
+    setShopType(type);
+
+
+    var currCoords;
+
+    try{
+      currCoords = await getUserCurrPosition();
+      setSuccess("Managed to get the user coords")
+    }
+    catch(e){
+      setError("Error: Failed to get the user's location")
+      console.log("Error(getShopsByType): " + e);
+    }
+
+    if(!currCoords || (currCoords.latitude === 0 && currCoords.longitude === 0) ){
+      setError("Get your location first.");
+      return;
+    }
+
+    try{
+      var response = axios.post("/api/CoffeeShop/GetShopsByType/GetShopsByType", {
+        Type: type,
+        userLat: currCoords.latitude,
+        userLng: currCoords.longitude,
+        DistanceRanage: distance
+      
+      });
+      setAmount(10);
+      setSuccess("Connected to the database");
+      setOutput((await response).data)
+
+    }catch(e){
+      const msg =
+        e?.response?.data?.message || e.message || "Didn't manage to connect to the server";
+      setError(msg);
+    }
+  }
+
   const getShopsByRating = async (ratingMin, ratingMax) => {
 
     setOutput("");
+    setOutput("");
     setAmount(0);
     setRatingRange(`${ratingMin},${ratingMax}`);
-    console.log(ratingRange);
+    console.log(ratingMin, ratingMax);
 
     var currCoords;
 
@@ -171,8 +211,78 @@ const FeaturesPage = () => {
 
 
   const popInputBar = (boolValue) => {
-    setInputBar(boolValue)
+    setInputBar(boolValue);
   };
+
+
+
+  /*------------------------------------------------------ Rate mode functions ------------------------------------------------------ */
+
+  /* Check if the same rate-button was pressed before, if yes, then return yes -> will erase the screen's output (makes the app's use more logically) */
+  const checkVisibility = (mode, minRate, maxRate, type) => {
+    if(mode === "type"){
+        if(isVisible && shopType === `${type}`){ /* For example: the state value 'rate:1-2' will be checked */
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+    if(mode === "rate"){
+      if(isVisible && option === `rate:${minRate}-${maxRate}`){ /* For example: the state value 'rate:1-2' will be checked */
+        return true;
+      }
+      else{
+        console.log("Hereeeeeee1");
+        return false;
+      }
+    }
+    else if(mode === 'distance' || mode === 'closest' || mode === 'name'){
+      if( (isVisible && option === 'distance') || (isVisible && option === 'closest') || (isVisible && option === 'name') ) /* The logic is similar for those options */
+        return true;
+      else
+        return false;
+    }
+  };
+  
+  /* Display the output of this given rate-mode\rate-button */
+  const DisplayOutput = (mode, type, minRate, maxRate) => {
+    switch(mode){
+
+      case "type":
+        setIsVisible(true);
+        setMode(mode);
+        getShopsByType(type);
+        setShopType(type);
+        setOption("type")
+        break;
+
+      case "rate":
+        console.log(`minRate: ${minRate}, maxRate: ${maxRate}`)
+        setIsVisible(true);
+        setMode(mode);
+        getShopsByRating(minRate, maxRate);
+        setOption(`${mode}:${minRate}-${maxRate}`); /* For example: Store the value\option 'rate:1-2' */
+        break;
+
+      case "name":
+      case "closest": 
+      case "distance":
+        setIsVisible(true);
+        setMode(mode);
+        setOption(mode);
+        break;
+    }  
+  }
+
+  /* Erase the current output from the screen (user pressed the same rate-button)  */
+  const EraseRateOutput = () => {
+    console.log("Hereeeeeee3");
+    setIsVisible(false);
+    setCoords(null);
+    setOption('none');
+    setOutput('');
+  }
 
     return (
 
@@ -198,89 +308,80 @@ const FeaturesPage = () => {
             {
               selectedLabel === "Find By Type" ? (
                 <div className="ml-4 grid grid-rows-2 grid-cols-4 gap-x-16 gap-y-4 place-items-center">
-                  <FeatureButton name="Italian" onClick={setType('Italian')} />
-                  <FeatureButton name="French" onClick={setType('French')} />
-                  <FeatureButton name="Cats" onClick={setType('Cats')} />
-                  <FeatureButton name="Classic" onClick={setType('Classic')} />
-                  <FeatureButton name="Truck" onClick={setType('Truck')}/>
-                  <FeatureButton name="Bakery" onClick={setType('Bakery')}/>
-                  <FeatureButton name="Theme" onClick={setType('Theme')}/>
-                  <FeatureButton name="Pub" onClick={setType('Pub')}/>                 
+                  <FeatureButton
+                   name="Italian" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Italian");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Italian");
+                   }} 
+                  />
+                  <FeatureButton name="French" onClick={ () => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","French");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "French");
+                  }} />
+                  <FeatureButton name="Cats" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Cats");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Cats");
+                  }} />
+                  <FeatureButton name="Classic" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Classic");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Classic");
+                  }} />
+                  <FeatureButton name="Truck" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Truck");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Truck");
+                  }}/>
+                  <FeatureButton name="Bakery" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Bakery");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Bakery");
+                    console.log(DisplayOutput("type", "Bakery"));
+                  }}/>
+                  <FeatureButton name="Theme" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Theme");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Theme");
+                  }}/>
+                  <FeatureButton name="Pub" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Pub");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Pub");
+                  }}/>                 
                 </div>
               ) 
               :selectedLabel === "Find By Rate" ? (
                 <div 
                   className="ml-4 grid grid-rows-1 grid-cols-5 gap-x-6 place-items-center">
-                  <FeatureButton name="1 - 2" onClick={() => {
-                    if(isVisible && option === 'rate:1-2'){
-                      setIsVisible(false);
-                      setCoords(null);
-                      setOption('none');
-                      return;
+                  <FeatureButton  name="1 - 2" onClick={() => {
+                    // IsVisible(1, 2);
+                    var CurrRateAlreadyDisplayed = checkVisibility("rate","", 1,2);
 
-                    }
-                    
-                    setIsVisible(true);
-                    setMode("rate");
-                    getShopsByRating(1, 2);
-                    setOption('rate:1-2');
+                    CurrRateAlreadyDisplayed ? EraseRateOutput(): DisplayOutput("rate", "", 1, 2); 
                   }}/>
                   <FeatureButton name="2 - 3" onClick={() => {
-                    
-                    if(isVisible && option === 'rate:2-3'){
-                      setIsVisible(false);
-                      setCoords(null);
-                      setOption('none');
-                      return;
-                    }
+                    var CurrRateAlreadyDisplayed = checkVisibility("rate", "", 2, 3);
 
-
-                    setIsVisible(true);
-                    setMode('rate');
-                    getShopsByRating(2, 3);
-                    setOption('rate:2-3');
+                    CurrRateAlreadyDisplayed ? EraseRateOutput(): DisplayOutput("rate","", 2, 3); 
                   }} />
                   <FeatureButton name="3 - 4" onClick={() => {
-                    
-                    if(isVisible && option === 'rate:3-4'){
-                      setIsVisible(false);
-                      setCoords(null);
-                      setOption('none')
-                      return;
-                    }
+                    var CurrRateAlreadyDisplayed = checkVisibility("rate", 3, 4);
 
-
-                    setIsVisible(true);
-                    setMode('rate');
-                    getShopsByRating(3, 4);
-                    setOption('rate:3-4');
+                    CurrRateAlreadyDisplayed ? EraseRateOutput() : DisplayOutput("rate","", 3, 4);
                   }} />
                   <FeatureButton name="4 - 4.5" onClick={() => {
-                    if(isVisible && option === 'rate:4-4.5'){
-                      setIsVisible(false);
-                      setCoords(null);
-                      setOption('none')
-                      return;
-                    }
+                    var CurrRateAlreadyDisplayed = checkVisibility("rate", 4, 4.5);
+                    console.log(CurrRateAlreadyDisplayed);
 
-                    setIsVisible(true);
-                    setMode('rate');
-                    getShopsByRating(4, 4.5)
-                    setOption('rate:4-4.5')
+                    CurrRateAlreadyDisplayed ? EraseRateOutput() : DisplayOutput("rate","", 4, 4.5);
                   }} />               
                   <FeatureButton name="4.5 - 5" onClick={() => {
-                    if(isVisible && option === 'rate:4.5-5'){
-                      setIsVisible(false);
-                      setCoords(null);
-                      setOption('none')
-                      return;
-
-                    }
-                  
-                    setIsVisible(true);
-                    setMode("rate");
-                    getShopsByRating(4.5, 5)
-                    setOption("rate:4.5-5")
+                    var CurrRateAlreadyDisplayed = checkVisibility("rate", 4.5,5);
+                    
+                    CurrRateAlreadyDisplayed ? EraseRateOutput() : DisplayOutput("rate", "", 4.5,5);
                   }}/>
               </div>
               )
@@ -304,21 +405,15 @@ const FeaturesPage = () => {
                     value = {inputBarClicked}
                     onClick={async () => {
 
-                    if(isVisible && option === 'name'){
-                      setIsVisible(false);
-                      setCoords(null);
-                      setOption('none');
-                      return;
-                    }
+                    var CurrRateAlreadyDisplayed = checkVisibility("name");
+                    
+                    CurrRateAlreadyDisplayed ? EraseRateOutput() : DisplayOutput("name");
 
-                    setIsVisible(true);
-                    setMode("name");
-                    setOption('name');
                     try{
                       const c = await getUserCurrPosition();
 
                       setCoords(c);
-                      await getShopsByName(inputBarValue, c);
+                      await getShopsByName(inputBarValue);
                     }
                     catch{
                       setError("Could not get your location.");
@@ -335,16 +430,9 @@ const FeaturesPage = () => {
                     
                     onClick={async () => {
 
-                      if(isVisible && option === 'closest'){
-                        setIsVisible(false);
-                        setCoords(null);
-                        setOption('none');
-                        return;
-                      }
-
-                      setIsVisible(true);
-                      setMode("closest")
-                      setOption('closest');
+                      var CurrRateAlreadyDisplayed = checkVisibility("closest");
+                      CurrRateAlreadyDisplayed ? EraseRateOutput() : DisplayOutput("closest");
+                    
                       try{
                         var c = await getUserCurrPosition();
                         setCoords(c);
@@ -372,16 +460,11 @@ const FeaturesPage = () => {
                     
                     onClick={async () => {
 
-                      if(isVisible && option === 'distance'){
-                        setIsVisible(false);
-                        setCoords(null);
-                        setOption('none');
-                        return;
-                      }
+                      var CurrRateAlreadyDisplayed = checkVisibility("distance");
+                      console.log(CurrRateAlreadyDisplayed);
+                      CurrRateAlreadyDisplayed ? EraseRateOutput() : DisplayOutput("distance");
+                      console.log(CurrRateAlreadyDisplayed);
 
-                      setIsVisible(true);
-                      setMode("distance");
-                      setOption('distance');
                       try{
                         const c = await getUserCurrPosition();
 
@@ -471,25 +554,25 @@ const FeaturesPage = () => {
               
           {mode === "distance" ? (
             <div id="output-label" className={isVisible ? "" : "hidden"}>
-              <ShopsOutput mode={mode} output={output} isVisible={isVisible}/>
+              <ShopsOutput mode={mode} output={output} /* isVisible={isVisible} */ />
             </div>
           ):mode === "type" ? (
             <div id="type-label" className={isVisible ? "" : "hidden"}>
-              <ShopsOutput mode={mode} output={output} isVisible={isVisible} distance={distance}/>
+              <ShopsOutput mode={mode} output={output} /* isVisible={isVisible} distance={distance} */ />
             </div>
           )
            : mode === "rate" ? (
             <div id="rating-label" className={isVisible ? "" : "hidden"}>
-              <ShopsOutput mode={mode} output={output} isVisible={isVisible} distance={distance}/>
+              <ShopsOutput mode={mode} output={output} /* isVisible={isVisible} distance={distance} */ />
             </div>
           ) : mode === "closest" ? (
             <div id="closest-label" className={isVisible ? "" : "hidden"}>
-    
+              <ShopsOutput mode={mode} output={output} /* isVisible={isVisible} distance={distance} */ />
             </div>
           ) 
           : mode === "name" ? (
             <div id="name-label" className={isVisible ? "" : "hidden"}>
-              <ShopsOutput mode={mode} output={output} isVisible={isVisible} inputBarValue={inputBarValue} inputBarClicked={inputBarClicked}/>
+              <ShopsOutput mode={mode} output={output} /* isVisible={isVisible} inputBarValue={inputBarValue} inputBarClicked={inputBarClicked}*/ />
             </div>
           )
           : null}
