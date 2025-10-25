@@ -1,21 +1,19 @@
-import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import UsernameHeader from './CoffeeShopOutput/UsernameHeader';
+import { useAuth } from "../context/AuthProvider"
 
 const LogoutButton = () => {
+  const { clearUser } = useAuth(); // access function from AuthProvider
 
-  const logout = ((nameParam, applyEffectParam) => {
-      <UsernameHeader name = {nameParam} applyEffect = {applyEffectParam}/>
-  });
+  const handleLogout = () => {
+      // <UsernameHeader/>
+      clearUser();
+  };
 
   return (
     <NavLink to='/login'>
       <div>
         <button 
-          onClick={() => {
-            localStorage.setItem('username', ' ');
-            logout(localStorage.getItem("username"), true);
-          }}
+          onClick={handleLogout}
           className='cursor-pointer
            hover:text-white hover:underline'
         >

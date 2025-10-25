@@ -1,5 +1,5 @@
 import { useState, useEffect} from "react";
-import axios from "axios";
+import axios from "../context/Axios.jsx"; // default import from axios.ts
 import React from 'react'
 import ImgLeft from "../assets/pictures/coffee-stands.png"
 import HomePage from "./HomePage";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import SpinnerLoader from "../components/SpinnerLoader";
 import Header from "../components/Header";
 import UsernameHeader from "../components/CoffeeShopOutput/UsernameHeader";
+import { useAuth } from "../context/AuthProvider.jsx";
 
 const LoginPage = () => {
 
@@ -17,6 +18,10 @@ const LoginPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState('');
+
+
+  const { refreshUser } = useAuth();
+
 
   //Save the login username
   const[usernameLabel, setUsernameLabel] = useState('');
@@ -47,39 +52,25 @@ const LoginPage = () => {
     try{
       setSubmitting(true);
 
-      //const res = await axios.post("/api/auth/login", loginAttempt);
-      const res = await axios.post("/api/auth/login", loginAttempt, { headers: { "Content-Type": "application/json" } });
+      /* Remark: "headers: { "Content-Type": "application/json" }"  is not necessary, is tells the backend (ASP.NET) to respond with json respond, which anyway happens in default with ASP.NET*/
+      const res = await axios.post("/api/auth/login", loginAttempt, { headers: { "Content-Type": "application/json" } }); //send the credentials to the backend
 
-      console.log("Username is:", usernameLabel);
       if(res?.status === 200 || res?.status === 201){
-
-        console.log("-----Logo-name test-----");
-
-        const userRes = await axios.get("/api/auth/getUsername"); // cookie will be sent
-        // setUsernameLabel(userRes.data.username);
         
-        var name = userRes.data.username;
-        console.log("Do I get the new name before localStorage?: " + name);
-        localStorage.setItem("username", name);
-        //localStorage.setItem("username", name);  // save
-        <UsernameHeader name={name} applyEffect={true}/>
-        setUsernameLabel(name);
-        
-        console.log("the value of the 'username' inside localstorage is: " + localStorage.getItem('username'));
-        // <UsernameHeader usernameLabel = {usernameLabel}/>
+        //Goes to AuthProvider and applies also the GET request which will insert the new data for the fresh connected user.
+        await refreshUser();
 
-        setSuccess('User exists, you will be moved to the main page');
+        setSuccess("User exists, you will be moved to the main page");
 
         setLoading(true);
-        setPassword('');
-        setUserName('');
-        
-        
+        setPassword("");
+        setUserName("");
+          
         // fake wait for 2s, then navigate
         setTimeout(() => {
           setLoading(false); // hide spinner
           navigate("/");
-        }, 4000);
+          }, 4000);
       }
       else{
         setError('Unexpected server response.');
@@ -110,6 +101,15 @@ const LoginPage = () => {
     }
 
   }
+ 
+
+
+
+
+
+
+
+
 
 
   return (
