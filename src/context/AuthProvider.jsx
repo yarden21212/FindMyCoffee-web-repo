@@ -12,14 +12,24 @@ export function AuthProvider({ children }) {
 
   async function refreshUser() {
     try {
-      const res = await axios.get("/api/auth/getUsername"); // cookie is sent automatically
+      const res = await axios.get("/api/auth/getUsername", { withCredentials: true }); // cookie is sent automatically
+      console.log("res: " + res);
       setUser({ username: res.data.username }); // It will create a AuthObject that looks like: user: { username: "YardenShay" }, refreUser: .., clearUser: ..
+
+      console.log("Created an AuthObject object ")
+
     } catch {
       setUser(null);
     }
   }
 
   function clearUser() {
+  axios.post("/api/auth/logout")  .then(function (response) {
+    console.log("Post call succeeded: " + response);
+  })
+  .catch(function (error) {
+    console.log("Post call failed: " + error);
+  });
     setUser(null);
   }
 

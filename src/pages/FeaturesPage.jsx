@@ -107,7 +107,7 @@ const FeaturesPage = () => {
     }
 
     try{
-      var response = axios.post("/api/CoffeeShop/GetShopsByType/GetShopsByType", {
+      var response = axios.post("/api/CoffeeShop/GetShopsByType", {
         Type: type,
         userLat: currCoords.latitude,
         userLng: currCoords.longitude,
@@ -189,7 +189,7 @@ const FeaturesPage = () => {
     }
 
     try{
-      var response = await axios.post('/api/CoffeeShop/GetShopsByName/GetShopsByName', {
+      var response = await axios.post('/api/CoffeeShop/GetShopsByName', {
       Name: inputBarValue,
       UserLat: currCoords.latitude,
       userLng: currCoords.longitude
@@ -296,7 +296,7 @@ const FeaturesPage = () => {
       <div className='h-screen place-items-center justify-self-center-safe'>
         <div 
           id="upper-label"
-          className='bg-amber-700/40 w-200 h-30  grid grid-cols-10 items-center gap-10 pt-2
+          className='bg-amber-700/40 w-220 h-30 grid grid-cols-10 items-center gap-10 pt-2
                         border-double border-6 border-black rounded-2xl  
                         shadow-lg shadow-gray-400 box mt-20'>
 
@@ -307,7 +307,7 @@ const FeaturesPage = () => {
 
             {
               selectedLabel === "Find By Type" ? (
-                <div className="ml-4 grid grid-rows-2 grid-cols-4 gap-x-16 gap-y-4 place-items-center">
+                <div className="ml-4 grid grid-rows-2 grid-cols-5 gap-x-16 gap-y-4 place-items-center">
                   <FeatureButton
                    name="Italian" onClick={() => {
                     var currTypeAlreadyDisplayed = checkVisibility("type","Italian");
@@ -350,7 +350,12 @@ const FeaturesPage = () => {
                     var currTypeAlreadyDisplayed = checkVisibility("type","Pub");
 
                     currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Pub");
-                  }}/>                 
+                  }}/>     
+                  <FeatureButton name="Espresso Bar" onClick={() => {
+                    var currTypeAlreadyDisplayed = checkVisibility("type","Espresso Bar");
+
+                    currTypeAlreadyDisplayed ? EraseRateOutput : DisplayOutput("type", "Espresso Bar");
+                  }}/>               
                 </div>
               ) 
               :selectedLabel === "Find By Rate" ? (
@@ -540,9 +545,7 @@ const FeaturesPage = () => {
                 * If the chosen mode is "Find By Type" or "Find By Rate", then a second dropdown component will show up under the first one 
                 */
                 (selectedLabel === "Find By Type" || selectedLabel === 'Find By Rate') && <div><SecondDropdown chooseDistance={chooseDistance}/></div>
-              }
-              
-              <button>{distance}</button>
+              } 
 
           </div>
           

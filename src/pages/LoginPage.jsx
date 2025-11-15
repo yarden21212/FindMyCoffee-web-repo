@@ -53,10 +53,10 @@ const LoginPage = () => {
       setSubmitting(true);
 
       /* Remark: "headers: { "Content-Type": "application/json" }"  is not necessary, is tells the backend (ASP.NET) to respond with json respond, which anyway happens in default with ASP.NET*/
-      const res = await axios.post("/api/auth/login", loginAttempt, { headers: { "Content-Type": "application/json" } }); //send the credentials to the backend
+      const res = await axios.post("/api/auth/login", loginAttempt, { headers: { "Content-Type": "application/json" }, withCredentials: true }); //send the credentials to the backend
 
       if(res?.status === 200 || res?.status === 201){
-        
+        console.log("auth-login method worked");
         //Goes to AuthProvider and applies also the GET request which will insert the new data for the fresh connected user.
         await refreshUser();
 
@@ -78,7 +78,7 @@ const LoginPage = () => {
     }
     catch(err){
       // Better visibility for what actually failed
-      console.error('Register error details:', {
+        console.error('Register error details:', {
         code: err?.code,
         message: err?.message,
         status: err?.response?.status,
@@ -135,15 +135,15 @@ const LoginPage = () => {
 
 
           {/* Card */}
-          <form onSubmit={handleSumbit} noValidate class="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-row border-3 border-amber-950/80">
+          <form onSubmit={handleSumbit} noValidate className="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-row border-3 border-amber-950/80">
 
               {/* Left */}
-              <div class="basis-3/16 bg-blue-200 border-r-4 border-amber-950/80 mr-2">
+              <div className="basis-3/16 bg-blue-200 border-r-4 border-amber-950/80 mr-2">
                 <img src={ImgLeft} className="w-full h-full object-cover"></img>
               </div>
 
               {/* Center */}
-              <div class="basis-10/16 mt-5">
+              <div className="basis-10/16 mt-5">
                 
                 <div className="flex items-center justify-center">
                   <p className="mb-10 font-bold">Login to your account</p>
@@ -204,7 +204,7 @@ const LoginPage = () => {
 
               </div>
               {/* Right */}
-              <div class="basis-3/16 bg-blue-200 border-l-4 border-amber-950/80">
+              <div className="basis-3/16 bg-blue-200 border-l-4 border-amber-950/80">
                 <img src={ImgLeft} className="w-full h-full object-cover"></img>
               </div>
 

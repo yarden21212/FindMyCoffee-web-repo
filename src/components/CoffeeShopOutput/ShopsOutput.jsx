@@ -30,12 +30,13 @@ const ShopsOutput = ({ mode, output}) => {
       >
         {output.map((shop, /* i */) => (
           <div key={shop.id} className="bg-amber-700/80 rounded-2xl p-3 text-white">
-            <p>Name: <strong>{shop.name}</strong></p>
+            <p>Name: <strong>{shop.businessName}</strong></p>
             <p>Vicinity: <strong>{shop.vicinity}</strong></p>
             <p>Rating: <strong>{shop.rating}⭐</strong></p>
             {/* <p>Title: <strong>{shop.title}</strong></p> */}
             <p>PriceLevel: <strong>{shop.priceLevel}</strong></p>
             <p>Distance: <strong>{shop.distanceKm}km</strong></p>
+            <p>Address: <strong>{shop.state}, {shop.city}</strong></p>
           </div>
         ))}
       </div>
