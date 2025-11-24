@@ -536,8 +536,6 @@ const FeaturesPage = () => {
                 </div>
               )}
 
-              
-              
             </div>
 
               {

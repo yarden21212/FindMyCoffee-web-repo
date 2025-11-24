@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 import Header from '../components/Header'
 import Picture from '../assets/pictures/website-logo-transparent.png'
 import axios from 'axios'
+import DropDownButton from '../components/DropDownButton'
+import HorizontalDropDownButton from '../components/HorizontalDropDownButton'
 const CreateCoffeeshopPage = () => {
 
   const [businessName, setBusinessName] = useState('');
   const [type, setType] = useState('');
+  const [typePressed, setTypePressed] = useState(false); //Used to flag if the user pressed on a type or not in order to know when to display the type
   const [priceLevel, setPriceLevel] = useState('');
+  const [priceLevelPressed, setPricLevelPressed] = useState(false); //Used to flag if the user pressed on a price or not in order to know when to display the type
   const [title, setTitle] = useState('');
   const [vicinity, setVicinity] = useState('');
   const [country, setCountry] = useState('');
@@ -14,11 +18,42 @@ const CreateCoffeeshopPage = () => {
   const [street, setStreet] = useState('');
   const [state, setState] = useState(' ');
   const [createSucceeded, setCreateSucceeded] = useState();
+  
+  const [typeDropDownVisible, setTypeDropDownVisible] = useState(false);
+  const [priceLevelDropDownVisible, setPriceLevelDropDownVisible] = useState(false);
+
+  const types = ["Italian", "French", "Cats", "Classic", "Truck", "Bakery", "Theme", "Pub", "Espresso Bar"];
+  const prices = [1, 2, 3];
+  
+
+  const handleChildDataForType = (data) => {
+    setType(data);
+    setTypePressed(true);
+  };
+
+  const handleChildDataForPriceLevel = (data) => {
+    setPriceLevel(data);
+    setPricLevelPressed(true);
+  };
+
 
   const handleSubmit = async (e) => {
+    e.preventDefault(); 
     setCreateSucceeded();
 
-    e.preventDefault();
+    // const formData = new FormData(e.target);
+
+    // const selectedType = formData.get('dropdown-group-1');
+    // console.log('Selected type:', selectedType);
+
+    // const selectedPriceLevel = priceLevel
+    // console.log('Selected price level:', selectedPriceLevel);
+
+    // // Delete it later:
+    // setType(selectedType);
+
+    // // Delete it later:
+    // setPriceLevel(selectedPriceLevel);
 
     // const newBusiness = {businessName, type, priceLevel, title, vicinity, country, city, street, state};
     await axios.post("/api/CoffeeShop/CreateShop", {
@@ -47,11 +82,62 @@ const CreateCoffeeshopPage = () => {
       <Header/>
 
       <div className='flex items-center justify-center'>
-        <div className="bg-gray-200 w-210 h-210 rounded-full border-amber-950 border-5 shadow-[0_0_80px_theme('colors.amber.900')] overflow-hidden
+        <div className="bg-gray-200 w-210 h-210 rounded-full border-amber-950 border-5 shadow-[0_0_80px_theme('colors.gray-300')] overflow-hidden
           flex items-center justify-center">
 
 
+
+
+
           <form onSubmit={handleSubmit} noValidate class="">
+      
+            {/* Button for choosing a type */}
+            <div className='flex items-center justify-center'>
+              <div class="mb-4 ">
+                <label class="block text-red-700 text-xl font-bold mb-2 cursor-pointer" htmlFor="type">
+                  <div 
+                    onClick={() => setTypeDropDownVisible(prev => !prev)}>
+                    Type: click and choose type!  
+                  </div>
+                  <div className='flex items-center justify-center ml-19 w-20 bg-transparent animate-pulse'>
+                    {typePressed && <div className='text-amber-900 font-bold border-amber-800 border-2 rounded-full p-2 '>{type}</div>}
+                  </div>
+                </label>
+                
+                  <div className='grid grid-cols-2 justify-items-center place-items-center ml-15'>
+                    <div className='flex items-center justify-center text-white'>
+
+                      {
+                        typeDropDownVisible && <HorizontalDropDownButton options={types} handleChildData={handleChildDataForType} groupNumber={1}/>
+                      }
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            {/* Button for choosing a price */}
+             <div className='flex items-center justify-center mt-10'>
+              <div class="mb-4 ">
+                <label class="block text-blue-700 text-xl font-bold mb-2 cursor-pointer" htmlFor="priceLevel">
+                  <div 
+                    onClick={() => setPriceLevelDropDownVisible(prev => !prev)}>
+                    Price level: click and choose price level!  
+                  </div>
+                  <div className='flex items-center justify-center ml-19 w-20 bg-transparent animate-pulse'>
+                    {priceLevelPressed && <div className='text-amber-900 font-bold border-amber-800 border-2 rounded-full p-2 '>{priceLevel}</div>}
+                  </div>
+                </label>
+                
+                  <div className='grid grid-cols-2 justify-items-center place-items-center ml-15'>
+                    <div className='flex items-center justify-center text-white'>
+
+                      {
+                        priceLevelDropDownVisible && <HorizontalDropDownButton options={prices} handleChildData={handleChildDataForPriceLevel} groupName={2}/>
+                      }
+                    </div>
+                  </div>
+              </div>
+            </div>
 
             <div className='flex items-start justify-center mt-10'>
               <img className='h-60 mr-12' src={Picture}></img>
@@ -65,21 +151,13 @@ const CreateCoffeeshopPage = () => {
                   id="business" type="text" placeholder="Business Name" onChange={(e) => setBusinessName(e.target.value)}/>
                 </div>
 
-                <div class="mb-4">
-                  <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
-                    Type
-                  </label>
-                  <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                  id="type" type="text" placeholder="Type" onChange={(e) => setType(e.target.value)}/>
-                </div>
-
-                <div class="mb-4">
+                {/* <div class="mb-4">
                   <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="priceLevel">
                     Price Level
                   </label>
                   <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                   id="priceLevel" type="text" placeholder="Price Level" onChange={(e) => setPriceLevel(e.target.value)}/>
-                </div>
+                </div> */}
 
                 <div class="mb-4">
                   <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
@@ -97,10 +175,11 @@ const CreateCoffeeshopPage = () => {
                   id="vicinity" type="text" placeholder="Vicinity" onChange={(e) => setVicinity(e.target.value)}/>
                 </div>
               </div>
+              
+              
               <img className='h-60 ml-12' src={Picture}></img>
             </div>
             
-
             <div className='mt-2 flex items-center justify-center'>
               <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="country">
