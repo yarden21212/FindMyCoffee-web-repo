@@ -18,7 +18,8 @@ const Header = () => {
             : null}
             <p>{<UsernameHeader/>}</p>
           </div>
-          <div className='grid place-items-centernter justify-items-center'>
+          
+          <div className='grid place-items-centernter justify-items-center ml-40'>
             <img src={IconImage} className='h-8 absolute top-1 ml-32 cursor-pointer hover:animate-pulse '/>
             <Link to="/" 
               className="h-10 text-xl text-[#4A2D1A]] font-semibold border-3 rounded-full px-2
@@ -26,22 +27,34 @@ const Header = () => {
               >FindMyCoffee 
             </Link>
           </div>
-
+      
           <nav className="flex gap-6">
-            <NavLink 
-              to="/becomeBusiness" 
-              className={({ isActive }) =>
-                `hover:underline ${isActive ? "font-semibold underline" : ""}`
-              }
-              >Become a Business!
-            </NavLink>
+
+
+            {user && (
+              <div>
+                <NavLink 
+                to="/becomeBusiness" 
+                className={({ isActive }) =>
+                  `hover:underline ${isActive ? "font-semibold underline" : ""}`
+                }
+                >Become a Business!
+              </NavLink>
+              
+              </div>
+              )
+            }
+          {/* TODO: Needs to be fixed! only if the user is already a business then this link can be seen! */}
+          {user && (
             <NavLink 
               to="/createCoffeeshop" 
               className={({ isActive }) =>
-                `hover:underline ${isActive ? "font-semibold underline" : ""}`
+                `hover:underline ${isActive ? "font-semibold underline" : ""}` 
               }
               >Add a coffeeshop!
             </NavLink>
+          )}
+
             <NavLink 
               to="/about" 
               className={({ isActive }) =>
@@ -49,6 +62,7 @@ const Header = () => {
               }
               >About
             </NavLink>
+
             <NavLink 
               to="/features" 
               className={({isActive}) =>
@@ -56,6 +70,7 @@ const Header = () => {
               }
               >Features
             </NavLink>
+
             {user == null ? (
               <NavLink 
               to="/login" 
@@ -66,6 +81,7 @@ const Header = () => {
             </NavLink>
             )
             : null}
+
             {user == null ? (
               <NavLink
               to="/register"
