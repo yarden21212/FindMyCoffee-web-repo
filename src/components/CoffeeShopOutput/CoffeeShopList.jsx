@@ -18,10 +18,10 @@ const CoffeeShopList = () => {
     
     axios
       .post("/api/CoffeeShop/FindClosestCoffeeshops/FindClosestCoffeeshops", newPost)
-      .then((response) => {
+      .then(() => {
         setResponseMessage("Post created successfully!");
       })
-      .catch((err) => {
+      .catch(() => {
         setResponseMessage("Error creating post");
       })
   };

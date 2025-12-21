@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import downArrowIcon from '../assets/down-arrow.svg'
 
-const SecondDropdown = ({chooseDistance}) => {
+const DistanceDropdown = ({chooseDistance}) => {
 
    const KM_LABELS = {
       closest: "0 to 5km",
@@ -63,4 +63,4 @@ const SecondDropdown = ({chooseDistance}) => {
   )
 }
 
-export default SecondDropdown
+export default DistanceDropdown

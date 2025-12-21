@@ -3,10 +3,10 @@ import Header from '../components/Header'
 import downArrowIcon from '../assets/down-arrow.svg'
 import FeatureButton from "../components/FeatureButton"
 import axios from "axios"
-import CoffeeShopList from "../components/CoffeeShopOutput/CoffeeShopList"
+
 import getUserCurrPosition from "../Services/GetUserCurrPosition";
 import ShopsOutput from "../components/CoffeeShopOutput/ShopsOutput"
-import SecondDropdown from "../components/SecondDropdown"
+import DistanceDropdown from "../components/DistanceDropdown"
 
 
 
@@ -542,7 +542,7 @@ const FeaturesPage = () => {
                 /*
                 * If the chosen mode is "Find By Type" or "Find By Rate", then a second dropdown component will show up under the first one 
                 */
-                (selectedLabel === "Find By Type" || selectedLabel === 'Find By Rate') && <div><SecondDropdown chooseDistance={chooseDistance}/></div>
+                (selectedLabel === "Find By Type" || selectedLabel === 'Find By Rate') && <div><DistanceDropdown chooseDistance={chooseDistance}/></div>
               } 
 
           </div>

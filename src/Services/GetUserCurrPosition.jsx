@@ -1,18 +1,3 @@
-/*
-* returns {Promise<{latitude: number, longitude: number}>}
-*/
-// export default function getUserCurrPosition(){
-//   return new Promise((resolve, reject) => {
-//     navigator.geolocation.getCurrentPosition(
-//       ({coords}) => {
-//         const {latitude, longitude} = coords;
-//         resolve({latitude, longitude});
-//       },
-//       (error) => reject(error)
-//     );
-//   });
-// }
-
 export default function getUserCurrPosition(){
   return new Promise((resolve, reject) => {
     

@@ -151,7 +151,7 @@ const CreateCoffeeshopPage = () => {
   }
 
   return (
-    <div className='bg-red-950 '>
+    <div className='min-h-screen bg-red-950 '>
       <Header/>
 
       
@@ -164,7 +164,7 @@ const CreateCoffeeshopPage = () => {
       
             {/* This section toggles the type dropdown */}
             <div className='flex items-center justify-center'>
-              <div class="mb-4 ">
+              <div className="mb-4 ">
               <div 
                 class="block text-red-700 text-xl font-bold mb-2 cursor-pointer" 
                 onClick={() => setTypeDropDownVisible(prev => !prev)} //Once click -> Makes the different type's buttons visible

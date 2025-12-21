@@ -24,7 +24,8 @@ export function AuthProvider({ children }) {
   }
 
   function clearUser() {
-  axios.post("/api/auth/logout")  .then(function (response) {
+  axios.post("/api/auth/logout")
+  .then(function (response) {
     console.log("Post call succeeded: " + response);
   })
   .catch(function (error) {

@@ -14,9 +14,10 @@ const Header = () => {
         <div className="px-10 py-3 flex items-center justify-between">
           
           <div className='flex items-center justify-center '>
-            {user != null ? (<p className='mr-10 '>{<LogoutButton/>}</p>)
+
+            {user != null ? (<div className='mr-10 '>{<LogoutButton/>}</div>)
             : null}
-            <p>{<UsernameHeader/>}</p>
+            <div>{<UsernameHeader/>}</div>
           </div>
           
           <div className='grid place-items-centernter justify-items-center ml-40'>
