@@ -16,30 +16,36 @@ const BecomeBusinessPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true)
-    // const business = {phoneNumber, email, termsAccepted};
     
     becomeBusinessHttpCall();
-    // console.log(business);
   }
   
   const becomeBusinessHttpCall = async() => {
-    try {
-      const res = await axios.post("/api/business/RegisterAsBusiness", {
-      Phone: phoneNumber,
-      ContactEmail: email,
-      AcceptBusinessTerms: termsAccepted,
-  });
-  console.log(res.data);
-  setSucceeded(true);
-  setLoading(false);
-} catch (err) {
-  console.error("POST failed:",
-    err.response?.status,
-    err.response?.data || err.message
-  );
-  setSucceeded(false);
-  setLoading(false);
-}
+    {/* First terms need to be marked in order to become a business */}
+    if(termsAccepted){
+      try{
+        const res = await axios.post("/api/business/RegisterAsBusiness", {
+        Phone: phoneNumber,
+        ContactEmail: email,
+        AcceptBusinessTerms: termsAccepted,
+        });
+        console.log(res.data);
+        setSucceeded(true);
+        setLoading(false);
+
+      }catch (err) {
+        console.error("POST failed:",
+          err.response?.status,
+          err.response?.data || err.message
+        );
+        setSucceeded(false);
+        setLoading(false);
+      }
+    }
+    else{
+      setSucceeded(false);
+      setLoading(false);
+    }
   }
 
   
@@ -59,7 +65,10 @@ const BecomeBusinessPage = () => {
               <p>Turn your <strong>FindMyCoffee</strong> account into a business profile so customers can find you.</p>
               <p>Fill your personal information so we can contact you:</p>
 
+              {/* Handles the "become a business" registration */}
               <form  onSubmit={handleSubmit} noValidate className='mt-10'>
+
+                {/* Phone number input component */}
                 <div>
                   <label 
                     htmlFor="first_name" 
@@ -76,6 +85,7 @@ const BecomeBusinessPage = () => {
                   />
                 </div>
 
+                {/* Business email input component */}
                 <div>
                     <label
                       htmlFor="business_mail" 
@@ -92,12 +102,14 @@ const BecomeBusinessPage = () => {
                     />
                 </div>
 
+                {/* Business email input component */}
                 <div 
                   className="flex items-center">
                   <input 
                     id="link-radio" 
                     type="radio" value="" 
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    onChange={() => setTermsAccepted(true)}
                   />
                   <label htmlFor="link-radio" 
                     className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Accept Business Terms

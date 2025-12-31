@@ -12,11 +12,9 @@ const DistanceDropdown = ({chooseDistance}) => {
     };
     const [selectedKmLabel, setSelectedKmLabel] = useState(KM_LABELS["any"]);
     const [isDistanceOpen, setIsDistanceOpen] = useState(false);
-    // const [kmMode, setKmMode] = useState("any");
 
-    // const [kmoption, setkmOption] = useState("none"); //Tracks which km option was pressed, so we can output the right output compared to the distance chosen
     const chooseKm = (chosenKmMode) => {
-      // setKmMode(chosenKmMode);
+
       setSelectedKmLabel(KM_LABELS[chosenKmMode]);
       setIsDistanceOpen(false);
     };
@@ -40,6 +38,7 @@ const DistanceDropdown = ({chooseDistance}) => {
       </div>
 
 
+      {/* Filter by distance (for Find By Type and Find By Rate) */}
       <div
         id="pointer-image" 
         className='flex items-center justify-center'

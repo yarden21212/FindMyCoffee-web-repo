@@ -52,7 +52,7 @@ const LoginPage = () => {
     try{
       setSubmitting(true);
 
-      /* Remark: "headers: { "Content-Type": "application/json" }"  is not necessary, is tells the backend (ASP.NET) to respond with json respond, which anyway happens in default with ASP.NET*/
+      /* Comment(P.S): "headers: { "Content-Type": "application/json" }"  is not necessary, is tells the backend (ASP.NET) to respond with json respond, which anyway happens in default with ASP.NET*/
       const res = await axios.post("/api/auth/login", loginAttempt, { headers: { "Content-Type": "application/json" }, withCredentials: true }); //send the credentials to the backend
 
       if(res?.status === 200 || res?.status === 201){
@@ -102,15 +102,6 @@ const LoginPage = () => {
 
   }
  
-
-
-
-
-
-
-
-
-
 
   return (
     <div> 

@@ -23,6 +23,7 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // It notifies the backend to kill the cookie and then sets the local user state to null to update the UI immediately.
   function clearUser() {
   axios.post("/api/auth/logout")
   .then(function (response) {
@@ -34,7 +35,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
-  // ask the server who I am once on app load
+  // Asks the server "who I am" once on app load (grabs the username)
   useEffect(() => { 
     refreshUser(); 
   }, []);

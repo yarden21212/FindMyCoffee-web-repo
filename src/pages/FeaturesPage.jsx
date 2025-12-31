@@ -9,8 +9,6 @@ import ShopsOutput from "../components/CoffeeShopOutput/ShopsOutput"
 import DistanceDropdown from "../components/DistanceDropdown"
 
 
-
-
 const FeaturesPage = () => {
   const [coords, setCoords] = useState(null);
   const [success, setSuccess] = useState("");
@@ -20,7 +18,6 @@ const FeaturesPage = () => {
 
 
   /* Buttons */
-  // const [justClick, setJustClick] = useState(false);
   const [isVisible ,setIsVisible] = useState(false);
   const [ratingRange, setRatingRange] = useState('');
   const [shopType, setShopType] = useState('');
@@ -55,6 +52,7 @@ const FeaturesPage = () => {
   const [inputBarClicked, setInputBarClicked] = useState(false);
 
 
+  { /* "Cloest Coffeeshop" - Finds the nearest in distance */ }
   const getClosestShops = async (numOfCoffeeshops, currCoords) => {
 
     setAmount(0);
@@ -84,6 +82,7 @@ const FeaturesPage = () => {
 
   };
 
+  { /* "Find By Type" - Finds at most the 9 closest coffeeshop by Type */ }
   const getShopsByType = async (type) => {
     setOutput("");
     setAmount(0);
@@ -125,6 +124,7 @@ const FeaturesPage = () => {
     }
   }
 
+  { /* "Find By Rate" - Finds at most the 9 closest coffeeshop by Rate */ }
   const getShopsByRating = async (ratingMin, ratingMax) => {
 
     setOutput("");
@@ -170,6 +170,7 @@ const FeaturesPage = () => {
     }
   }
 
+  { /* "Find By Name" - Finds at most the 9 closest coffeeshop by given name */ }
   const getShopsByName = async(name) => {
 
     setOutput("");
@@ -523,6 +524,7 @@ const FeaturesPage = () => {
               </div>
               
 
+              {/* Dropdown menu for the different features a use can serach by */}
               {isOpen && (
                 <div 
                   className="inline- border border-gray-200 rounded-md bg-white absolute top-[40px] w-[400px] shadow-md"

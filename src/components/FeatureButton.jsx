@@ -1,8 +1,7 @@
 import React from 'react'
 
+{/* Button for Type and Rate on feature page. The user presses to choose an option*/}
 const FeatureButton = (props) => {
-  
-
   
   return (
     <div 

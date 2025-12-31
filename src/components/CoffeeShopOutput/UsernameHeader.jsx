@@ -6,8 +6,7 @@ const UsernameHeader = () => {
   console.log("Did useAuth inside UsernameHeader failed?");
   const { user } = useAuth();
 
-
-
+  // Checks if the user exists before trying to look at their name (optional chaining operator)
   const letter = user?.username?.charAt(0)?.toUpperCase() || null;
   if (!letter) return null;
 

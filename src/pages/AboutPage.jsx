@@ -4,6 +4,7 @@ import firstPicture from '../assets/pictures/Coffee-machine-at-bar-enviroment.pn
 import secondPicture from '../assets/pictures/coffee-main-background.png'
 import { Link, NavLink } from 'react-router-dom'
 
+{/* About page which explains about the website with extra option to send the user directly to the "Features page" (the heart of the website) */}
 const AboutPage = () => {
   return (
     <div className='bg-amber-100 min-h-screen'>

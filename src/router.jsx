@@ -3,7 +3,6 @@ import { createBrowserRouter } from "react-router-dom";
 import LoginPage from "./pages/LoginPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import SpinnerLoader from "./components/SpinnerLoader.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import FeaturesPage from "./pages/FeaturesPage.jsx";
 import BecomeBusinessPage from "./pages/BecomeBusinessPage.jsx";

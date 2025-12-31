@@ -3,6 +3,7 @@ import React from 'react'
 
 const HorizontalDropDownButton = ({options, handleChildData , groupNumber}) => {
 
+  {/* Drop-down button for  choosing a type and price-level when a business user adds a new shop to the website */}
   return (
     <div className='absolute mt-10 flex gap-1'>
       {options.map((element, index) => (

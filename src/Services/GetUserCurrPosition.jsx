@@ -6,14 +6,14 @@ export default function getUserCurrPosition(){
     }
     else{
       navigator.geolocation.getCurrentPosition(
-      // 1. SUCCESS CALLBACK: Runs when the position is successfully retrieved
+      // 1. Success CALLBACK: Runs when the position is successfully retrieved
       (position) => {
         const { latitude, longitude } = position.coords;
         // Fulfills the Promise, passing the data as the resolved value.
         resolve({ latitude, longitude });
       },
       
-      // 2. ERROR CALLBACK: Runs when the request fails (e.g., user denies permission)
+      // 2. Error CALLBACK: Runs when the request fails (e.g., user denies permission)
       (error) => {
         // Rejects the Promise, passing the error object as the rejection reason.
         reject(error);

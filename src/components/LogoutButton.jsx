@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from "../context/AuthProvider"
 
 const LogoutButton = () => {
-  const { clearUser } = useAuth(); // access function from AuthProvider
+  const { clearUser } = useAuth(); // access clearUser function from AuthProvider
 
   const handleLogout = () => {
       // <UsernameHeader/>

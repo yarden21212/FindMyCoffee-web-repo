@@ -166,7 +166,7 @@ const CreateCoffeeshopPage = () => {
             <div className='flex items-center justify-center'>
               <div className="mb-4 ">
               <div 
-                class="block text-red-700 text-xl font-bold mb-2 cursor-pointer" 
+                className="block text-red-700 text-xl font-bold mb-2 cursor-pointer" 
                 onClick={() => setTypeDropDownVisible(prev => !prev)} //Once click -> Makes the different type's buttons visible
               >
                 Type: click and choose type!
@@ -176,6 +176,7 @@ const CreateCoffeeshopPage = () => {
                 {typePressed && <div className='text-amber-900 font-bold border-amber-800 border-2 rounded-full p-2 '>{type}</div>}
               </div>
 
+                  {/* Type Dropdown component */}
                   <div className='grid grid-cols-2 justify-items-center place-items-center ml-15 mt-2'>
                     <div className='flex items-center justify-center text-white'>
 
@@ -212,7 +213,7 @@ const CreateCoffeeshopPage = () => {
                     )}
                   </div>
                 
-                
+                {/* Price-level Dropdown component */}
                 <div className='grid grid-cols-2 justify-items-center place-items-center ml-27 mt-1'>
                   <div className='flex items-center justify-center text-white'>
 
@@ -234,6 +235,7 @@ const CreateCoffeeshopPage = () => {
             <div className='flex items-start justify-center mt-10'>
               <img className='h-60 mr-12' src={Picture}></img>
 
+              {/* Business Name input component*/}
               <div className="grid-cols-5 place-items-center justify-items-center">
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="businessName">
@@ -242,7 +244,8 @@ const CreateCoffeeshopPage = () => {
                   <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                   id="business" type="text" placeholder="Business Name" onChange={(e) => setBusinessName(e.target.value)}/>
                 </div>
-
+                
+                {/* Title input component*/}
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                     Title
@@ -250,7 +253,8 @@ const CreateCoffeeshopPage = () => {
                   <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                   id="title" type="text" placeholder="Title" onChange={(e) => setTitle(e.target.value)}/>
                 </div>
-
+                
+                {/* Vicinity input component */}
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="vicinity">
                     Vicinity
@@ -263,7 +267,8 @@ const CreateCoffeeshopPage = () => {
               
               <img className='h-60 ml-12' src={Picture}></img>
             </div>
-            
+
+            {/* Country input component */}
             <div className='mt-2 flex items-center justify-center'>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="country">
@@ -273,6 +278,7 @@ const CreateCoffeeshopPage = () => {
                 id="country" type="text" placeholder="Country" onChange={(e) => setCountry(e.target.value)}/>
               </div>
 
+              {/* City input component */}
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="city">
                   City
@@ -280,7 +286,8 @@ const CreateCoffeeshopPage = () => {
                 <input className="shadow appearance-none border rounded w-30 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline grow mr-2" 
                 id="city" type="text" placeholder="City" onChange={(e) => setCity(e.target.value)}/>
               </div>
-
+                  
+              {/* Street input component */}
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="street">
                   Street
@@ -289,6 +296,7 @@ const CreateCoffeeshopPage = () => {
                 id="street" type="text" placeholder="Street" onChange={(e) => setStreet(e.target.value)}/>
               </div>
 
+              {/* State input component */}
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="state">
                   State
@@ -298,7 +306,7 @@ const CreateCoffeeshopPage = () => {
               </div>
             </div>
             
-            
+            {/* Create a Coffee Shop button & succeed or failed messages about creation */}
             <div className='grid place-items-center justify-items-center mt-5'> 
               <button className="w-lg h-12 rounded-full border-amber-950 border-3 shadow-[0_0_20px_theme('colors.amber.900')] cursor-pointer">Create a Coffee Shop!</button>
               {/* Spinner */}
@@ -308,8 +316,9 @@ const CreateCoffeeshopPage = () => {
                 {createSucceeded === true ? ( <p className="text-green-600 mt-4">Shop was created!</p>) 
                 : createSucceeded === false ? (
                   <div className='grid place-items-center justify-items-center'>
-                    <p className="text-red-600 mt-4">Shop failed to be created.</p>
-                    <p className="text-red-600 mt-1">Try to look on google for accurate info.</p>
+                    <p className="text-red-900 mt-4">Shop failed to be created.</p>
+                    <p className="text-red-600 mt-1">Did you become a business? <strong className='underline'>if so:</strong></p>
+                    <p className="text-red-600 mt-1">Look on google for accurate info.</p>
                   </div>
                 ) 
                 : null
