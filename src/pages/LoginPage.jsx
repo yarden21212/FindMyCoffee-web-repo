@@ -109,7 +109,7 @@ const LoginPage = () => {
       <div className='bg-zinc-200  shadow-2xl'>
         <Header />
       </div>
-      <div className="min-h-screen bg-amber-100 flex items-center justify-center p-4">
+      <div className=" bg-amber-100 flex items-center justify-center p-4 min-h-screen">
         {/* External part */}
         <div className="w-full max-w-4xl bg-white rounded-2xl">
           
@@ -117,7 +117,7 @@ const LoginPage = () => {
           <div className="relative">
             {/* Spinner overlay */}
             { loading ? (
-              <div className=" inset-0 flex items-center  bg-zinc-100 justify-center z-50">
+              <div className=" inset-0 flex items-center  bg-amber-100 justify-center z-50">
                 <SpinnerLoader />
               </div>
               

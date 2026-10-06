@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthProvider.jsx";
 
 const UsernameHeader = () => {
 
-  console.log("Did useAuth inside UsernameHeader failed?");
+  // console.log("Did useAuth inside UsernameHeader failed?");
   const { user } = useAuth();
 
   // Checks if the user exists before trying to look at their name (optional chaining operator)
