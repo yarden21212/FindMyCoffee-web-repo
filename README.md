@@ -7,11 +7,9 @@ FindMyCoffee is a full-stack coffee-shop discovery application that helps people
 
 This was my first full-stack development project, built as a hands-on opportunity to deepen my understanding of frontend development, backend architecture, databases, and deployment.  
 
-This repository contains the ASP.NET Core backend. The React frontend is maintained in a separate repository.  
+This repository contains the React frontend. The ASP.NET Core backend is maintained in a separate repository.  
 Live application source: [Live Application](https://findmycoffee-app.netlify.app/)  
-
-This repository contains the ASP.NET Core backend. The React frontend is maintained in a separate repository.
-Frontend source: [Fronted](https://github.com-web-repo)
+Backend source: [Backend](https://github.com-web-repo](https://github.com/yarden21212/FindMyCoffee))
 <h1></h1>
 
 <h1>Features</h1>
