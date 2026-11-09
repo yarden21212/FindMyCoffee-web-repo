@@ -9,7 +9,7 @@ This was my first full-stack development project, built as a hands-on opportunit
 
 This repository contains the React frontend. The ASP.NET Core backend is maintained in a separate repository.  
 Live application source: [Live Application](https://findmycoffee-app.netlify.app/)  
-Backend source: [Backend](https://github.com-web-repo](https://github.com/yarden21212/FindMyCoffee))
+Backend source: [Backend](https://github.com/yarden21212/FindMyCoffee)
 <h1></h1>
 
 <h1>Features</h1>
