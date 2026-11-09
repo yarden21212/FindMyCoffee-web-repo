@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import HorizontalDropDownButton from '../HorizontalDropDownButton'
+import useRatingSound from '../../hooks/useRatingSound'
 
 
 /*
@@ -10,8 +11,8 @@ import HorizontalDropDownButton from '../HorizontalDropDownButton'
 const grid = (mode, amount) => {
   if (mode === 'closest' || mode === 'distance' || mode === 'rate' || mode === 'type' || mode === 'name') {
     if (amount <= 1) return 'grid grid-cols-1 gap-4 mt-4'
-    if (amount == 2) return 'grid grid-cols-2 gap-4 mt-4'
-    if (amount >= 3) return 'grid grid-cols-3 gap-4 mt-4'
+    if (amount == 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'
+    if (amount >= 3) return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4'
   }
   else return "hidden"
 }
@@ -23,6 +24,7 @@ const grid = (mode, amount) => {
   Let the user rate a shop (choose 1-5 and send POST request).
 */
 const ShopsOutput = ({ mode, output }) => {
+  const { prepareRatingSound, playRatingSound } = useRatingSound();
 
   /* 
     We want to rate a shop only when mode === 'name'
@@ -57,30 +59,8 @@ const ShopsOutput = ({ mode, output }) => {
   const [rate, setRate] = useState({})               // shopId -> chosen rate
   const [ratePressed, setRatePressed] = useState({}) // shopId -> bool
 
-  /* UI messages 
-     error/displayError = show red box error message
-     message/displayMessage = show green box success message
-  */
-  const [error, setError] = useState(false);
-  const [displayError, setDisplayError] = useState("");
-  const [message, setMessage] = useState(false);
-  const [displayMessage, setDisplayMessage] = useState("");
-
-  const throwError = () => {
-    return (
-      <div className='flex items-center justify-center bg-red-300 mt-4 p-1 rounded-md border-3 border-white w-full'>
-        <div className='font-bold text-sm'>{displayError}</div>
-      </div>
-    )
-  }
-
-  const throwSuccess = () => {
-    return (
-      <div className='flex items-center justify-center bg-green-300 mt-4 p-1 rounded-md border-3 border-white w-full'>
-        <div className='font-bold text-lg'>{displayMessage}</div>
-      </div>
-    )
-  }
+  // Rating messages belong to each shop, not the whole list.
+  const [ratingFeedback, setRatingFeedback] = useState({});
 
     /*
     This opens/closes the horizontal rating buttons for THIS shop.
@@ -116,39 +96,52 @@ const ShopsOutput = ({ mode, output }) => {
     5) On failure: show error message
   */
   const handleSubmitRate = async (e, shopId) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (rate[shopId] == null || rate[shopId] === '') {
-      setError(true)
-      setDisplayError('Please choose a rate first!')
-      return
+      setRatingFeedback(prev => ({
+        ...prev,
+        [shopId]: { type: 'error', text: 'Please choose a rate first!' },
+      }));
+      return;
     }
 
-    setError(false)
-    setDisplayError('')
+    prepareRatingSound();
+    setRatingFeedback(prev => ({ ...prev, [shopId]: null }));
 
     try {
-      await axios.post("/api/CoffeeShop/Rate", {
-        Id: shopId,
-        UserRate: rate[shopId]
-      });
+      await axios.post(
+        "/api/CoffeeShop/Rate",
+        {
+          Id: shopId,
+          UserRate: rate[shopId],
+        },
+        {
+          timeout: 10000, // Stop waiting after 10 seconds.
+        }
+      );
 
-      // Reset only this shop UI (same concept as resetForm, but per shop)
-      setRate(prev => ({ ...prev, [shopId]: '' }))
-      setRatePressed(prev => ({ ...prev, [shopId]: false }))
-      setRateDropDownVisible(prev => ({ ...prev, [shopId]: false }))
-      setMessage(true)
-      setError(false)
-      setDisplayMessage('Rate was given!')
-      setDisplayError('');
+      setRate(prev => ({ ...prev, [shopId]: '' }));
+      setRatePressed(prev => ({ ...prev, [shopId]: false }));
+      setRateDropDownVisible(prev => ({ ...prev, [shopId]: false }));
+      setRatingFeedback(prev => ({
+        ...prev,
+        [shopId]: { type: 'success', text: 'Rating submitted!' },
+      }));
+      void playRatingSound();
     } catch (err) {
       console.log("Http POST failed: the error is: " + err);
-      setError(true);
-      setMessage(false);
-      setDisplayError('Rating failed. Try again.');
-      setDisplayMessage('');
+      setRatingFeedback(prev => ({
+        ...prev,
+        [shopId]: {
+          type: 'error',
+          text: err.code === "ECONNABORTED"
+            ? "No confirmation received. Refresh to check your rating."
+            : "Rating failed. Try again.",
+        },
+      }));
     }
-  }
+  };
 
   if (!output) return "loading..."
   if (output.length === 0) return <p>No results</p>
@@ -161,7 +154,7 @@ const ShopsOutput = ({ mode, output }) => {
       className={`mx-auto w-full max-w-6xl ${gridClass}`}
     >
       {output.map((shop) => (
-        <div key={shop.id} className="bg-amber-700/80 rounded-2xl p-3 text-white">
+        <div key={shop.id} className="min-w-0 break-words bg-amber-700/80 rounded-2xl p-3 text-white">
           <p>Name: <strong>{shop.businessName}</strong></p>
           <p>Vicinity: <strong>{shop.vicinity}</strong></p>
           <p>Rating: <strong>{shop.rating}⭐ ({shop.totalUserRating})</strong></p>
@@ -174,12 +167,14 @@ const ShopsOutput = ({ mode, output }) => {
             <div className='mt-5'>
 
               {/* Toggle section */}
-              <div
-                className="block text-blue-200 text-xl font-bold mb-2 cursor-pointer"
+              <button
+                type="button"
+                aria-expanded={!!rateDropDownVisible[shop.id]}
                 onClick={() => toggleRateDropDownVisible(shop.id)}
+                className="mb-3 rounded-xl border-2 border-amber-950 bg-amber-100 px-4 py-2 font-bold text-amber-950 focus-visible:outline-2 focus-visible:outline-offset-4"
               >
-                Rate: click and choose rate!
-              </div>
+                Choose your rating
+              </button>
 
               {/* Shows chosen rate only after pressed */}
               <div className='flex items-center justify-center ml-2 w-20 bg-transparent animate-pulse'>
@@ -210,8 +205,19 @@ const ShopsOutput = ({ mode, output }) => {
                 </button>
               </form>
 
-              {/* Error message (same style) */}
-              {error && throwError() || message && throwSuccess()}
+              {/* Feedback for this shop only */}
+              {ratingFeedback[shop.id] && (
+                <p
+                  role={ratingFeedback[shop.id].type === 'error' ? 'alert' : 'status'}
+                  className={`mt-4 w-full rounded-md border-2 px-3 py-2 text-sm font-bold ${
+                    ratingFeedback[shop.id].type === 'error'
+                      ? 'border-red-800 bg-red-100 text-red-950'
+                      : 'border-green-800 bg-green-100 text-green-950'
+                  }`}
+                >
+                  {ratingFeedback[shop.id].text}
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -257,7 +263,7 @@ export default ShopsOutput
 //         // style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
 //       >
 //         {output.map((shop, /* i */) => (
-//           <div key={shop.id} className="bg-amber-700/80 rounded-2xl p-3 text-white">
+//           <div key={shop.id} className="min-w-0 break-words bg-amber-700/80 rounded-2xl p-3 text-white">
 //             <p>Name: <strong>{shop.businessName}</strong></p>
 //             <p>Vicinity: <strong>{shop.vicinity}</strong></p>
 //             <p>Rating: <strong>{shop.rating}⭐</strong></p>
