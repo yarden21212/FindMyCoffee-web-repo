@@ -1,15 +1,15 @@
 import React from 'react'
 
 
-const HorizontalDropDownButton = ({options, handleChildData , groupNumber}) => {
+const HorizontalDropDownButton = ({options, handleChildData , groupNumber, inline = false}) => {
 
   {/* Drop-down button for  choosing a type and price-level when a business user adds a new shop to the website */}
   return (
-    <div className='absolute mt-10 flex gap-1'>
+    <div className={inline ? 'flex w-full flex-wrap justify-center gap-2' : 'absolute mt-10 flex gap-1'}>
       {options.map((element, index) => (
         
         <label
-          className="bg-yellow-600 text-sm font-bold border-2 border-black rounded-md p-1 cursor-pointer hover:bg-amber-400 active:bg-amber-600"
+          className="bg-yellow-600 text-sm font-bold border-2 border-black rounded-md p-1 cursor-pointer hover:bg-amber-400 active:bg-amber-600 focus-within:bg-amber-500"
           htmlFor={`dropdown-radio-${index}${groupNumber}`}
           key={index}
         >
@@ -36,7 +36,7 @@ export default HorizontalDropDownButton
 // const HorizontalDropDownButton = ({ options, selectedValue, onChange, groupNumber }) => {
 
 //   return (
-//     <div className='absolute mt-10 flex gap-1'>
+//     <div className={inline ? 'flex w-full flex-wrap justify-center gap-2' : 'absolute mt-10 flex gap-1'}>
 //       {options.map((element, index) => (
 //         <label
 //           className="bg-yellow-600 text-sm font-bold border-2 border-black rounded-md p-1 cursor-pointer hover:bg-amber-400 active:bg-amber-600"

@@ -1,6 +1,10 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "https://findmycoffee-production.up.railway.app";          // Vite proxy will forward /api to backend -> Means “start requests from the site root” -> Vite proxy is what actually forwards /api to the backend.
+// Development: use Vite's proxy to reach the local backend.
+// Production: send requests directly to Railway.
+axios.defaults.baseURL = import.meta.env.DEV
+  ? ""
+  : "https://findmycoffee-production.up.railway.app";
 axios.defaults.withCredentials = true;  // Harmless here, helpful if I switch to CORS in the future
 
 export default axios;

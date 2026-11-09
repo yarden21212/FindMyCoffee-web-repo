@@ -28,12 +28,12 @@ const DistanceDropdown = ({chooseDistance}) => {
     
      <div
       id="extra-dropdown" 
-      className='border-2 border-gray-300 w-40 px-2 py-1 rounded font-bold cursor-pointer flex justify-between relative bg-white shadow-sm select-none'
+      className='border-2 border-gray-300 w-full max-w-64 px-2 py-1 rounded font-bold cursor-pointer flex justify-between relative bg-white shadow-sm select-none'
       onClick={distanceDropdown}
     >
       <div 
         id="distance-options"
-        className='text-[14px]'
+        className='text-[14px] whitespace-nowrap'
         >{selectedKmLabel}
       </div>
 
@@ -47,15 +47,17 @@ const DistanceDropdown = ({chooseDistance}) => {
       </div>
       
       {isDistanceOpen && (
-        <div 
-          className="inline- border border-gray-200 rounded-md bg-white absolute top-[40px] w-[400px] shadow-md"
+        <div
+          onClick={(event) => event.stopPropagation()}
+
+          className="inline- border border-gray-200 rounded-md bg-white absolute top-full left-0 z-40 mt-2 w-full whitespace-nowrap shadow-md"
         >
           
-          <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {chooseKm("closest"); setSelectedKmLabel(KM_LABELS["closest"]); chooseDistance("closest")} }>0 to 5 km</div>
-          <div className="cursor-pointer hover:bg-gray-200 px-s4 p-4" onClick={() => {chooseKm("close"); setSelectedKmLabel(KM_LABELS["close"]); chooseDistance("close")} }>5 to 10km</div>
-          <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {chooseKm("mid"); setSelectedKmLabel(KM_LABELS["mid"]); chooseDistance("mid")}}>10 to 30km</div>
-          <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {chooseKm("far"); setSelectedKmLabel(KM_LABELS["far"]); chooseDistance("far")}}>30 to 60km</div>
-          <div className="cursor-pointer hover:bg-gray-200 px-4 p-4" onClick={() => {chooseKm("any"); setSelectedKmLabel(KM_LABELS["any"]); chooseDistance("any")}}>Any</div>
+          <div className="cursor-pointer hover:bg-gray-200 px-3 py-3" onClick={() => {chooseKm("closest"); setSelectedKmLabel(KM_LABELS["closest"]); chooseDistance("closest")} }>0 to 5 km</div>
+          <div className="cursor-pointer hover:bg-gray-200 px-3 py-3" onClick={() => {chooseKm("close"); setSelectedKmLabel(KM_LABELS["close"]); chooseDistance("close")} }>5 to 10km</div>
+          <div className="cursor-pointer hover:bg-gray-200 px-3 py-3" onClick={() => {chooseKm("mid"); setSelectedKmLabel(KM_LABELS["mid"]); chooseDistance("mid")}}>10 to 30km</div>
+          <div className="cursor-pointer hover:bg-gray-200 px-3 py-3" onClick={() => {chooseKm("far"); setSelectedKmLabel(KM_LABELS["far"]); chooseDistance("far")}}>30 to 60km</div>
+          <div className="cursor-pointer hover:bg-gray-200 px-3 py-3" onClick={() => {chooseKm("any"); setSelectedKmLabel(KM_LABELS["any"]); chooseDistance("any")}}>Any</div>
         </div>
       )}
     </div>

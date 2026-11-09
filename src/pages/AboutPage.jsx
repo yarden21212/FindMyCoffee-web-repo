@@ -1,8 +1,7 @@
-import React from 'react'
 import Header from '../components/Header'
 import firstPicture from '../assets/pictures/Coffee-machine-at-bar-enviroment.png'
 import secondPicture from '../assets/pictures/coffee-main-background.png'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 {/* About page which explains about the website with extra option to send the user directly to the "Features page" (the heart of the website) */}
 const AboutPage = () => {
@@ -12,13 +11,13 @@ const AboutPage = () => {
         <Header />
       </div>
 
-        <div className="mt-10 flex justify-between place-items-start gap-10 justify-items-end mr-30">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-start gap-8 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:py-12">
 
-          <div className="ml-30">
-            <p className="text-6xl font-semibold text-amber-950 pr-70 leading-tight">
+          <div className="min-w-0">
+            <p className="mb-4 text-3xl font-semibold text-amber-950 leading-tight sm:text-5xl">
               About us:
             </p>
-            <p className="text-xl font-semibold text-amber-800 pr-70">
+            <p className="text-base font-semibold leading-relaxed text-amber-800 sm:text-lg">
               FindMyCoffee is willing to be the first website with one and only purpose, to find your perfect coffee! <br /><br />
               Want a specific environment? A specific type of coffee-shop? <br /><br />
               Are you a cat lover? Classic fan? French or Italian addicted? This application is exactly for you! Would you like to know where is the perfect coffee-shop for you? <br /><br />
@@ -27,26 +26,26 @@ const AboutPage = () => {
             </p>
             
           </div>
-          <div className="w-140 border-4 rounded-md">
-            <img className='hover:animate-pulse hover:[animation-duration:6s]' src={firstPicture}/>
+          <div className="w-full min-w-0 overflow-hidden border-4 rounded-md">
+            <img className='block h-auto w-full motion-safe:hover:animate-pulse hover:[animation-duration:6s]' alt='Coffee machine on a café counter' src={firstPicture}/>
           </div>
         </div>
         
          <div>
-          <div className="mt-20 flex justify-between place-items-start gap-10 justify-items-end mr-30">
-            <div className="ml-30">
-              <p className='text-7xl font- font-semibold mb-5 text-amber-950  hover:text-amber-700 '>Start Exploring</p>
-              <p className='text-xl font-semibold text-amber-800'>
+          <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-8 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:py-12">
+            <div className="min-w-0">
+              <p className='text-3xl sm:text-5xl font-semibold mb-5 text-amber-950 hover:text-amber-700 '>Start Exploring</p>
+              <p className='text-base sm:text-lg font-semibold text-amber-800'>
                 You won't know until you try, right?
               </p>
-               <p className='mt-30 text-5xl font-semibold text-emerald-300 text-shadow-lg'>
+               <p className='mt-6 text-xl sm:text-2xl font-semibold text-amber-950'>
                 Just Click on the image and Experience!
               </p>
             </div>
             <NavLink 
               to={'/features'}
-              className="col-span-6 w-80 border-4 rounded-full mb-10">
-              <img className="rounded-full hover:animate-spin hover:[animation-duration:7s] " src={secondPicture}/>
+              className="block w-full max-w-64 justify-self-center overflow-hidden border-4 border-amber-950 rounded-full mb-6 focus-visible:outline-2 focus-visible:outline-offset-4">
+              <img aria-label="Explore coffee shops" className="block h-auto w-full rounded-full motion-safe:hover:animate-spin hover:[animation-duration:7s]" alt="" src={secondPicture}/>
             </NavLink>
           </div>
         </div>

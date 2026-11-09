@@ -85,3 +85,8 @@ button:focus-visible {
     @apply text-base font-medium tracking-tight text-slate-900 dark:text-black
   }
 } */
+/* Fade the Home shortcut hints in and out. */
+@keyframes coffee-hint-fade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}

@@ -155,16 +155,16 @@ const CreateCoffeeshopPage = () => {
       <Header/>
 
       
-      <div className='flex items-center justify-center'>
-        <div className="bg-gray-200 w-210 h-210 rounded-full border-amber-950 border-5 shadow-[0_0_80px_theme('colors.gray-300')] overflow-hidden
+      <div className='mx-auto flex w-full max-w-5xl items-center justify-center px-4 py-8 sm:px-6'>
+        <div className="bg-gray-200 w-full max-w-4xl min-w-0 rounded-2xl border-amber-950 border-5 p-4 sm:p-8 shadow-[0_0_40px_theme('colors.gray-300')]
           flex items-center justify-center">
 
 
-          <form onSubmit={handleSubmit} noValidate class="">
+          <form onSubmit={handleSubmit} noValidate className="w-full min-w-0">
       
             {/* This section toggles the type dropdown */}
             <div className='flex items-center justify-center'>
-              <div className="mb-4 ">
+              <div className="mb-4 w-full min-w-0 text-center">
               <div 
                 className="block text-red-700 text-xl font-bold mb-2 cursor-pointer" 
                 onClick={() => setTypeDropDownVisible(prev => !prev)} //Once click -> Makes the different type's buttons visible
@@ -172,12 +172,12 @@ const CreateCoffeeshopPage = () => {
                 Type: click and choose type!
               </div>
               
-              <div className='flex items-center justify-center ml-19 w-20 bg-transparent animate-pulse'>
+              <div className='flex items-center justify-center mx-auto w-fit max-w-full bg-transparent animate-pulse'>
                 {typePressed && <div className='text-amber-900 font-bold border-amber-800 border-2 rounded-full p-2 '>{type}</div>}
               </div>
 
                   {/* Type Dropdown component */}
-                  <div className='grid grid-cols-2 justify-items-center place-items-center ml-15 mt-2'>
+                  <div className='w-full mt-3'>
                     <div className='flex items-center justify-center text-white'>
 
                       {/* Creates the buttons with logic inside HorizontalDropDownButton component */}
@@ -187,7 +187,7 @@ const CreateCoffeeshopPage = () => {
                         <HorizontalDropDownButton
                           options={types} 
                           handleChildData={handleChildDataForType} 
-                          groupNumber={1}
+                          groupNumber={1} inline
                         />
                       }
                     </div>
@@ -197,7 +197,7 @@ const CreateCoffeeshopPage = () => {
 
               {/* This section toggles the price dropdown */}
               <div className='flex items-center justify-center mt-5'>
-                <div className="mb-4 ">
+                <div className="mb-4 w-full min-w-0 text-center">
                   <div 
                     className="block text-blue-700 text-xl font-bold mb-2 cursor-pointer"
                     onClick={() => setPriceLevelDropDownVisible(prev => !prev)}
@@ -205,16 +205,16 @@ const CreateCoffeeshopPage = () => {
                     Price level: click and choose price level! 
                   </div>
 
-                  <div className='flex items-center justify-center ml-19 w-20 bg-transparent animate-pulse'>
+                  <div className='flex items-center justify-center mx-auto w-fit max-w-full bg-transparent animate-pulse'>
                     {priceLevelPressed && (
-                      <div className='text-amber-900 font-bold border-amber-800 border-2 rounded-full p-2 ml-29'>
+                      <div className='text-amber-900 font-bold border-amber-800 border-2 rounded-full p-2'>
                         {priceLevel}
                       </div>
                     )}
                   </div>
                 
                 {/* Price-level Dropdown component */}
-                <div className='grid grid-cols-2 justify-items-center place-items-center ml-27 mt-1'>
+                <div className='w-full mt-3'>
                   <div className='flex items-center justify-center text-white'>
 
                     {/* Creates the buttons with logic inside HorizontalDropDownButton component */}
@@ -224,7 +224,7 @@ const CreateCoffeeshopPage = () => {
                       <HorizontalDropDownButton 
                         options={prices} 
                         handleChildData={handleChildDataForPriceLevel} 
-                        groupNumber={2}
+                        groupNumber={2} inline
                       />
                     }
                   </div>
@@ -232,11 +232,11 @@ const CreateCoffeeshopPage = () => {
               </div>
             </div>
 
-            <div className='flex items-start justify-center mt-10'>
-              <img className='h-60 mr-12' src={Picture}></img>
+            <div className='flex min-w-0 items-start justify-center gap-4 mt-6'>
+              <img className='hidden lg:block h-40 w-24 shrink-0 object-contain' alt='' src={Picture}></img>
 
               {/* Business Name input component*/}
-              <div className="grid-cols-5 place-items-center justify-items-center">
+              <div className="w-full min-w-0 max-w-md">
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="businessName">
                     Business Name
@@ -265,16 +265,16 @@ const CreateCoffeeshopPage = () => {
               </div>
               
               
-              <img className='h-60 ml-12' src={Picture}></img>
+              <img className='hidden lg:block h-40 w-24 shrink-0 object-contain' alt='' src={Picture}></img>
             </div>
 
             {/* Country input component */}
-            <div className='mt-2 flex items-center justify-center'>
+            <div className='mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="country">
                   Country
                 </label>
-                <input className="shadow appearance-none border rounded w-30 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline grow mr-2" 
+                <input className="shadow appearance-none border rounded w-full min-w-0 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                 id="country" type="text" placeholder="Country" onChange={(e) => setCountry(e.target.value)}/>
               </div>
 
@@ -283,7 +283,7 @@ const CreateCoffeeshopPage = () => {
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="city">
                   City
                 </label>
-                <input className="shadow appearance-none border rounded w-30 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline grow mr-2" 
+                <input className="shadow appearance-none border rounded w-full min-w-0 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                 id="city" type="text" placeholder="City" onChange={(e) => setCity(e.target.value)}/>
               </div>
                   
@@ -292,7 +292,7 @@ const CreateCoffeeshopPage = () => {
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="street">
                   Street
                 </label>
-                <input className="shadow appearance-none border rounded w-30 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline grow mr-2" 
+                <input className="shadow appearance-none border rounded w-full min-w-0 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                 id="street" type="text" placeholder="Street" onChange={(e) => setStreet(e.target.value)}/>
               </div>
 
@@ -301,14 +301,14 @@ const CreateCoffeeshopPage = () => {
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="state">
                   State
                 </label>
-                <input className="shadow appearance-none border rounded w-30 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline grow mr-2" 
+                <input className="shadow appearance-none border rounded w-full min-w-0 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                 id="state" type="text" placeholder="State" onChange={(e) => setState(e.target.value)}/>
               </div>
             </div>
             
             {/* Create a Coffee Shop button & succeed or failed messages about creation */}
             <div className='grid place-items-center justify-items-center mt-5'> 
-              <button className="w-lg h-12 rounded-full border-amber-950 border-3 shadow-[0_0_20px_theme('colors.amber.900')] cursor-pointer">Create a Coffee Shop!</button>
+              <button className="w-full max-w-lg min-h-12 px-3 py-2 rounded-full border-amber-950 border-3 shadow-[0_0_20px_theme('colors.amber.900')] cursor-pointer">Create a Coffee Shop!</button>
               {/* Spinner */}
               {loading == true && <SpinnerLoader/>}
 
